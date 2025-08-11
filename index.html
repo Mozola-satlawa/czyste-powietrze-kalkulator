@@ -478,13 +478,9 @@ q('#fileImportEnv').addEventListener('change', e=>{
   r.onload=()=>{ try{ localStorage.setItem('cp2025_env', r.result); loadEnv(); }catch{ toast('Import nieudany', true);} };
   r.readAsText(f);
 });
-
 function csvEscape(v){
   const s = String(v ?? '');
-  // jeśli są znaki specjalne, otocz w cudzysłowy i podwajaj istniejące cudzysłowy
   return /[",;\n]/.test(s) ? "${s.replace(/"/g, '""')}" : s;
-}
-
 function downloadCSV(name, rowsOut){
   const csv  = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
@@ -493,7 +489,6 @@ function downloadCSV(name, rowsOut){
   a.download = name.endsWith('.csv') ? name : ${name}.csv;
   a.click();
   URL.revokeObjectURL(a.href);
-}
 }
 function exportMainCSV(){
   const level = calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
@@ -613,4 +608,5 @@ init();
 </script>
 </body>
 </html>
+
 
