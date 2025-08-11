@@ -1,4 +1,3 @@
-console.log('CP kalkulator: JS działa ✔');
 <!doctype html>
 <html lang="pl">
 <head>
@@ -48,7 +47,6 @@ console.log('CP kalkulator: JS działa ✔');
   .chip.mid{background:#22463a; border:1px solid #2fa672; color:#baf3d0}
   .chip.top{background:#3a2c1a; border:1px solid #e0b34d; color:#ffe7a8}
   .chip.none{background:#3b1d27; border:1px solid #ad3e5a; color:#ffd0dc}
-  .row-actions{display:flex; gap:6px; justify-content:flex-end}
   .small{font-size:12px}
   .hr{height:1px; background:var(--grid); margin:10px 0 2px}
   .hidden{display:none}
@@ -74,7 +72,7 @@ console.log('CP kalkulator: JS działa ✔');
   </div>
 
   <!-- TAB: MAIN -->
-  <section id="tab-main" role="tabpanel" aria-labelledby="tab-main-btn">
+  <section id="tab-main" role="tabpanel">
     <section class="panel">
       <div class="grid cols-3">
         <div>
@@ -154,7 +152,7 @@ console.log('CP kalkulator: JS działa ✔');
   </section>
 
   <!-- TAB: ENVELOPE -->
-  <section id="tab-envelope" class="hidden" role="tabpanel" aria-labelledby="tab-envelope-btn">
+  <section id="tab-envelope" class="hidden" role="tabpanel">
     <section class="panel">
       <div class="grid cols-2">
         <div>
@@ -210,6 +208,8 @@ console.log('CP kalkulator: JS działa ✔');
 </div>
 
 <script>
+console.log('CP kalkulator: JS działa ✔'); // diagnostyka
+
 /* ===== helpers ===== */
 const q = s => document.querySelector(s);
 const qa = s => Array.from(document.querySelectorAll(s));
@@ -306,14 +306,14 @@ function loadMain(){
   const raw = localStorage.getItem('cp2025_main'); if(!raw){ toast('Brak zapisu (główna).'); return; }
   try{
     const p = JSON.parse(raw);
-    q('#typ').value=p.typ||''; q('#osoby').value=p.osoby||''; q('#doch_mies').value=p.mies||''; q('#doch_roczny').value=p.roczny||''; q('#swiadczenia').value=p.swiad||'';
+    q('#typ').value=p.typ||''; q'#osoby').value=p.osoby||''; q('#doch_mies').value=p.mies||''; q('#doch_roczny').value=p.roczny||''; q('#swiadczenia').value=p.swiad||'';
     rows = Array.isArray(p.rows)? p.rows : []; renderMain(); toast('Wczytano (główna).');
   }catch{ toast('Nie udało się wczytać (główna).', true); }
 }
 function resetMain(){ localStorage.removeItem('cp2025_main'); q('#typ').value=''; q('#osoby').value=''; q('#doch_mies').value=''; q('#doch_roczny').value=''; q('#swiadczenia').value=''; presetMain(); renderMain(); }
 function presetMain(){ rows=[]; PRESET.forEach(p=>rows.push({...p, id:uuid()})); }
 
-/* ===== ENVELOPE (ocieplenie/stolarka) ===== */
+/* ===== ENVELOPE ===== */
 let envRows = [];
 const PRESET_ENV = [
   {n:'Ściany zewnętrzne', c:0, le1:12000, le2:21000, le3:30000, gt1:14000, gt2:24500, gt3:35000},
@@ -477,5 +477,3 @@ init();
 </script>
 </body>
 </html>
-<!-- build: 2025-08-11 -->
-
