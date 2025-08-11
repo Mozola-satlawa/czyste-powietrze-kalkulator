@@ -480,7 +480,7 @@ q('#fileImportEnv').addEventListener('change', e=>{
 });
 function csvEscape(v){
   const s = String(v ?? '');
-  return /[",;\n]/.test(s) ? "${s.replace(/"/g, '""')}" : s;
+  return /[",;\n]/.test(s) ? "${s.replace(/"/g '""')}" : s;
 function downloadCSV(name, rowsOut){
   const csv  = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
   const blob = new Blob([csv] { type: 'text/csv;charset=utf-8' });
@@ -608,6 +608,7 @@ init();
 </script>
 </body>
 </html>
+
 
 
 
