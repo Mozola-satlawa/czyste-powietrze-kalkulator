@@ -479,15 +479,21 @@ q('#fileImportEnv').addEventListener('change', e=>{
   r.readAsText(f);
 });
 
-function csvEscape(v){ const s = String(v ?? ''); return /[",;\n]/.test(s) ? "${s.replace(/"/g,'""')}" : s; }
+function csvEscape(v){
+  const s = String(v ?? '');
+  // jeśli są znaki specjalne, otocz w cudzysłowy i podwajaj istniejące cudzysłowy
+  return /[",;\n]/.test(s) ? "${s.replace(/"/g, '""')}" : s;
+}
+
 function downloadCSV(name, rowsOut){
-  const csv = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
-  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const csv  = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
   a.download = name.endsWith('.csv') ? name : ${name}.csv;
   a.click();
   URL.revokeObjectURL(a.href);
+}
 }
 function exportMainCSV(){
   const level = calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
@@ -607,3 +613,4 @@ init();
 </script>
 </body>
 </html>
+
