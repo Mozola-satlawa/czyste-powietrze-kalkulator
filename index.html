@@ -306,7 +306,24 @@ function loadMain(){
   const raw = localStorage.getItem('cp2025_main'); if(!raw){ toast('Brak zapisu (główna).'); return; }
   try{
     const p = JSON.parse(raw);
-    q('#typ').value=p.typ||''; q'#osoby').value=p.osoby||''; q('#doch_mies').value=p.mies||''; q('#doch_roczny').value=p.roczny||''; q('#swiadczenia').value=p.swiad||'';
+   function loadMain(){
+  const raw = localStorage.getItem('cp2025_main');
+  if (!raw) { toast('Brak zapisu (główna).'); return; }
+  try {
+    const p = JSON.parse(raw);
+    q('#typ').value          = p.typ   ?? '';
+    q('#osoby').value        = p.osoby ?? '';
+    q('#doch_mies').value    = p.mies  ?? '';
+    q('#doch_roczny').value  = p.roczny?? '';
+    q('#swiadczenia').value  = p.swiad ?? '';
+    rows = Array.isArray(p.rows) ? p.rows : [];
+    renderMain();
+    toast('Wczytano (główna).');
+  } catch (e) {
+    console.error('loadMain error:', e);
+    toast('Nie udało się wczytać (główna).', true);
+  }
+}
     rows = Array.isArray(p.rows)? p.rows : []; renderMain(); toast('Wczytano (główna).');
   }catch{ toast('Nie udało się wczytać (główna).', true); }
 }
@@ -477,3 +494,4 @@ init();
 </script>
 </body>
 </html>
+
