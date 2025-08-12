@@ -583,7 +583,6 @@ q('#fileImportEnv').addEventListener('change', e=>{
   r.onload=()=>{ try{ localStorage.setItem('cp2025_env', r.result); loadEnv(); }catch{ toast('Import nieudany', true);} };
   r.readAsText(f);
 });
-function csvEscape(v){ const s = String(v ?? ''); return /[",;\n]/.test(s) ? "${s.replace(/"/g, '""')}" : s; }
 function downloadCSV(name, rowsOut){
   const csv  = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
