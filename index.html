@@ -1,112 +1,111 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kalkulator dotacji – Czyste Powietrze (2025) • wersja SUPER</title>
-<meta name="description" content="Kalkulator dotacji programu Czyste Powietrze 2025: poziomy, limity, zł/m² i zł/szt., presety, walidacja, CSV/JSON, druk/PDF.">
-<link rel="icon" href="/favicon.ico">
-<style>
-  :root{
-    --bg:#0b1020; --panel:#121a34; --panel-2:#172142; --ink:#e8edff; --muted:#aeb8da;
-    --accent:#4cc9f0; --warn:#ffd166; --ok:#95d5b2; --bad:#ef476f; --grid:#243059;
-    --error:#b22d44; --error-b:#ff90a3; --good:#234b2f; --good-b:#4caf79;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0; background:linear-gradient(180deg,#0a0f1e, #0c1230 60%, #0a0f1e); color:var(--ink); font:16px/1.4 system-ui,Segoe UI,Roboto,Arial}
-  .wrap{max-width:1100px; margin:auto; padding:28px 18px 96px}
-  header{display:flex; gap:14px; align-items:center; margin-bottom:18px}
-  .logo{width:46px; height:46px; border-radius:10px; display:grid; place-items:center; background:radial-gradient(120% 120% at 20% 20%, #1f2a55, #0b1333); border:1px solid #1f2a55; box-shadow:0 6px 24px #0006, inset 0 0 0 1px #2a3870; color:#4cc9f0; font-weight:700}
-  h1{font-size:20px; margin:0}
-  .muted{color:var(--muted); font-size:13px}
-  .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 16px}
-  .tab-btn{background:linear-gradient(180deg,#2b3a77,#26336c); border:1px solid #3a4ca3; color:#fff; border-radius:999px; padding:10px 14px; cursor:pointer}
-  .tab-btn.active{background:#1b2550; border-color:#67a1ff; box-shadow:0 0 0 2px #67a1ff44}
-  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid #1c2750; border-radius:14px; padding:16px; box-shadow:0 10px 30px #0006; margin-bottom:16px}
-  .grid{display:grid; gap:12px}
-  @media (min-width:860px){ .grid.cols-3{grid-template-columns:1.2fr 1fr 1fr} .grid.cols-2{grid-template-columns:1fr 1fr} }
-  label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
-  input,select,button{font:600 15px/1.2 system-ui,Segoe UI,Roboto,Arial; color:var(--ink)}
-  input,select{width:100%; background:#0d1530; border:1px solid #28356c; border-radius:10px; padding:12px; outline:none; transition:border .2s, box-shadow .2s}
-  input:focus,select:focus{border-color:#3b4fa0; box-shadow:0 0 0 3px #3b4fa033}
-  .error{border-color:var(--error-b) !important; box-shadow:0 0 0 3px #ff90a355 !important}
-  .pill{display:inline-flex; gap:6px; align-items:center; padding:8px 12px; border-radius:999px; background:#0d1530; border:1px dashed #2b3a77; color:var(--muted); font-size:13px}
-  .stat{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-  .toolbar{display:flex; gap:10px; flex-wrap:wrap}
-  button{background:linear-gradient(180deg,#2b3a77,#26336c); border:1px solid #3a4ca3; color:#fff; border-radius:12px; padding:12px 14px; cursor:pointer; box-shadow:0 6px 18px #0008, inset 0 0 0 1px #4d63c7}
-  button.ghost{background:transparent; border:1px dashed #3a4ca3}
-  button.warn{background:linear-gradient(180deg,#67521e,#5a491e); border-color:#b08b2e}
-  button.ok{background:linear-gradient(180deg,#1c5c3a,#184f32); border-color:#2b8a57}
-  .good{background:var(--good); border:1px solid var(--good-b)}
-  .bad{background:var(--error); border:1px solid var(--error-b)}
-  table{width:100%; border-collapse:separate; border-spacing:0; color:var(--ink)}
-  th,td{padding:12px; text-align:left; border-bottom:1px solid var(--grid)}
-  thead th{position:sticky; top:0; background:#0f1840; z-index:1; font-size:13px; color:#d6ddff}
-  tbody tr:hover td{background:#0e1635}
-  tfoot td{font-weight:800}
-  .num{text-align:right}
-  .chip{display:inline-block; padding:.3rem .6rem; border-radius:999px; font-weight:800; font-size:13px}
-  .chip.basic{background:#23305f; border:1px solid #3650d2; color:#bcd0ff}
-  .chip.mid{background:#22463a; border:1px solid #2fa672; color:#baf3d0}
-  .chip.top{background:#3a2c1a; border:1px solid #e0b34d; color:#ffe7a8}
-  .chip.none{background:#3b1d27; border:1px solid #ad3e5a; color:#ffd0dc}
-  .small{font-size:12px}
-  .hr{height:1px; background:var(--grid); margin:10px 0 2px}
-  .hidden{display:none}
-  .summary{display:flex; flex-wrap:wrap; gap:10px; margin:8px 0}
-  .badge{padding:10px 12px; border-radius:10px; background:#0d1530; border:1px solid #2b3a77; font-weight:700}
-  .badge.warn{background:#402d12; border-color:#b08b2e}
-  @media print{ body{background:#fff; color:#000} .panel{box-shadow:none; border:1px solid #ccc; background:#fff} button,.toolbar,.tabs{display:none !important} .logo{border:0; box-shadow:none} .chip{border:1px solid #000} }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kalkulator dotacji – Czyste Powietrze (2025) • wersja SUPER</title>
+  <meta name="description" content="Kalkulator dotacji programu Czyste Powietrze 2025: poziomy, limity, zł/m², podsumowania, eksport CSV/JSON, druk/PDF.">
+
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a34; --panel2:#172142; --ink:#e8edff; --muted:#aeb8da;
+      --accent:#4cc9f0; --accent2:#80ffdb; --warn:#ffd166; --ok:#95d5b2; --bad:#ef476f; --grid:#243059;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; background:linear-gradient(180deg,#0a0f1e,#0c1230 60%,#0a0f1e); color:var(--ink); font:16px/1.45 system-ui,Segoe UI,Roboto,Arial}
+    .wrap{max-width:1100px;margin:auto;padding:26px 16px 90px}
+    header{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+    .logo{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:radial-gradient(120% 120% at 20% 20%,#1f2a55,#0b1333);border:1px solid #1f2a55;box-shadow:0 6px 24px #0006,inset 0 0 0 1px #2a3870;color:var(--accent);font-weight:700}
+    h1{font-size:20px;margin:0}
+    .muted{color:var(--muted);font-size:13px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+    .tab-btn{background:linear-gradient(180deg,#2b3a77,#26336c);border:1px solid #3a4ca3;color:#fff;border-radius:999px;padding:10px 14px;cursor:pointer}
+    .tab-btn.active{background:#1b2550;border-color:#67a1ff;box-shadow:0 0 0 2px #67a1ff44}
+    .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid #1c2750;border-radius:14px;padding:16px;box-shadow:0 10px 30px #0006;margin-bottom:16px}
+    .grid{display:grid;gap:12px}
+    @media (min-width:860px){ .grid.cols-3{grid-template-columns:1.2fr 1fr 1fr} .grid.cols-2{grid-template-columns:1fr 1fr} }
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select,button,textarea{font:600 15px/1.2 system-ui,Segoe UI,Roboto,Arial;color:var(--ink)}
+    input,select,textarea{width:100%;background:#0d1530;border:1px solid #28356c;border-radius:10px;padding:12px;outline:none;transition:border .2s,box-shadow .2s}
+    input:focus,select:focus,textarea:focus{border-color:#3b4fa0;box-shadow:0 0 0 3px #3b4fa033}
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:8px 12px;border-radius:999px;background:#0d1530;border:1px dashed #2b3a77;color:var(--muted);font-size:13px}
+    .badge{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border-radius:8px;background:#102257;border:1px solid #2b3a77;font-size:13px;margin-right:6px;margin-bottom:6px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap}
+    button{background:linear-gradient(180deg,#2b3a77,#26336c);border:1px solid #3a4ca3;color:#fff;border-radius:12px;padding:12px 14px;cursor:pointer;box-shadow:0 6px 18px #0008,inset 0 0 0 1px #4d63c7}
+    button.ghost{background:transparent;border:1px dashed #3a4ca3}
+    button.warn{background:linear-gradient(180deg,#67521e,#5a491e);border-color:#b08b2e}
+    button.ok{background:linear-gradient(180deg,#1c5c3a,#184f32);border-color:#2b8a57}
+    table{width:100%;border-collapse:separate;border-spacing:0;color:var(--ink)}
+    th,td{padding:12px;text-align:left;border-bottom:1px solid var(--grid)}
+    thead th{position:sticky;top:0;background:#0f1840;z-index:1;font-size:13px;color:#d6ddff}
+    tbody tr:hover td{background:#0e1635}
+    tfoot td{font-weight:800}
+    .num{text-align:right}
+    .chip{display:inline-block;padding:.3rem .6rem;border-radius:999px;font-weight:800;font-size:13px}
+    .chip.basic{background:#23305f;border:1px solid #3650d2;color:#bcd0ff}
+    .chip.mid{background:#22463a;border:1px solid #2fa672;color:#baf3d0}
+    .chip.top{background:#3a2c1a;border:1px solid #e0b34d;color:#ffe7a8}
+    .chip.none{background:#3b1d27;border:1px solid #ad3e5a;color:#ffd0dc}
+    .row-actions{display:flex;gap:6px;justify-content:flex-end}
+    .small{font-size:12px}
+    .hr{height:1px;background:var(--grid);margin:10px 0 2px}
+    .hidden{display:none}
+    @media print{ body{background:#fff;color:#000} .panel{box-shadow:none;border:1px solid #ccc;background:#fff} button,.toolbar,.tabs{display:none !important} .logo{border:0;box-shadow:none} .chip{border:1px solid #000} }
+  </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="logo" aria-hidden="true">CP</div>
+    <div class="logo">CP</div>
     <div>
-      <h1>Kalkulator dotacji • Czyste Powietrze 2025 (SUPER)</h1>
-      <div class="muted">Kalkulator pomocniczy – sprawdź aktualne dokumenty programu. Presety, walidacja, limity zł/m² i zł/szt., podsumowania.</div>
+      <h1>Kalkulator dotacji • Czyste Powietrze 2025</h1>
+      <div class="muted">Kalkulator główny + „Ocieplenie i stolarka”. Zapisy lokalne, eksport CSV/JSON, druk/PDF. Pokazujemy też minimalny koszt, aby wykorzystać pełny limit dla danego poziomu.</div>
     </div>
   </header>
 
-  <div class="tabs" role="tablist" aria-label="Tryby kalkulatora">
-    <button class="tab-btn active" data-tab="main" role="tab" aria-selected="true" aria-controls="tab-main">Kalkulator główny</button>
-    <button class="tab-btn" data-tab="envelope" role="tab" aria-selected="false" aria-controls="tab-envelope">Ocieplenie/Stolarka/Wentylacja</button>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="main">Kalkulator główny</button>
+    <button class="tab-btn" data-tab="envelope">Ocieplenie i stolarka</button>
   </div>
 
   <!-- TAB: MAIN -->
-  <section id="tab-main" role="tabpanel">
+  <section id="tab-main">
     <section class="panel">
       <div class="grid cols-3">
         <div>
-          <label for="typ">Typ gospodarstwa</label>
-          <select id="typ"><option value="">— wybierz —</option><option>JEDNO</option><option>WIELO</option></select>
+          <label>Typ gospodarstwa</label>
+          <select id="typ">
+            <option value="">— wybierz —</option>
+            <option>JEDNO</option>
+            <option>WIELO</option>
+          </select>
         </div>
         <div>
-          <label for="osoby">Liczba osób w gospodarstwie</label>
-          <input id="osoby" type="number" min="1" step="1" placeholder="np. 3" />
+          <label>Liczba osób w gospodarstwie</label>
+          <input id="osoby" type="number" min="1" step="1" placeholder="np. 3">
         </div>
         <div>
-          <label for="doch_mies">Miesięczny dochód na osobę [zł]</label>
-          <input id="doch_mies" inputmode="decimal" placeholder="np. 2100" />
+          <label>Miesięczny dochód na osobę [zł]</label>
+          <input id="doch_mies" inputmode="decimal" placeholder="np. 2100">
         </div>
         <div>
-          <label for="doch_roczny">Roczny dochód wnioskodawcy [zł]</label>
-          <input id="doch_roczny" inputmode="decimal" placeholder="np. 120000" />
+          <label>Roczny dochód wnioskodawcy [zł]</label>
+          <input id="doch_roczny" inputmode="decimal" placeholder="np. 120000">
         </div>
         <div>
-          <label for="swiadczenia">Pobierasz świadczenia (MOPS/GOPS itp.)</label>
-          <select id="swiadczenia"><option value="">— wybierz —</option><option>TAK</option><option>NIE</option></select>
+          <label>Pobierasz świadczenia (MOPS/GOPS itp.)</label>
+          <select id="swiadczenia">
+            <option value="">— wybierz —</option>
+            <option>TAK</option>
+            <option>NIE</option>
+          </select>
         </div>
-        <div class="stat">
-          <span class="pill">Poziom:&nbsp;<span id="poziom_chip" class="value chip none" aria-live="polite">—</span></span>
-          <span class="pill">Procent:&nbsp;<span id="procent" class="value" aria-live="polite">—</span></span>
+        <div>
+          <span class="badge">Poziom: <b id="poziom_chip" class="chip none">—</b></span>
+          <span class="badge">Procent: <b id="procent">—</b></span>
+          <span class="badge">Min. koszt by wykorzystać 100% limitu (główna): <b id="needSumMain">—</b></span>
         </div>
-      </div>
-      <div class="summary">
-        <div class="badge">Aktualny poziom: <b id="badgeLevelName"></b> • <b id="badgeLevelPct"></b></div>
-        <div class="badge">Wymagany koszt kwal. (100%) dla SUMY limitów (główna): <b id="needSumMain">0 zł</b></div>
       </div>
       <div class="hr"></div>
       <div class="toolbar">
@@ -121,17 +120,17 @@
         <button id="btnExportMainCSV" class="ghost">Eksport CSV (główna)</button>
         <button id="btnExportAllCSV" class="ghost">Eksport CSV (łączny)</button>
         <button id="btnCopySummary" class="ghost">Kopiuj podsumowanie</button>
-        <span class="pill">Presety: 
-          <button class="ghost" id="presetBasic">Podstawowy</button>
-          <button class="ghost" id="presetMid">Podwyższony</button>
-          <button class="ghost" id="presetTop">Najwyższy</button>
-        </span>
       </div>
+      <div class="small muted" style="margin-top:6px">Kalkulator pomocniczy – przed złożeniem wniosku zweryfikuj zasady w dokumentach programu.</div>
     </section>
 
     <section class="panel">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
         <div class="muted">Wydatki i limity (dotacja = min(koszt × %, limit dla poziomu))</div>
+        <div class="toolbar">
+          <button id="btnAdd">+ Dodaj pozycję</button>
+          <button id="btnPreset">Przywróć domyślne</button>
+        </div>
       </div>
       <div style="overflow:auto; margin-top:10px">
         <table id="tbl">
@@ -142,18 +141,17 @@
               <th class="num">Limit – podstawowy</th>
               <th class="num">Limit – podwyższony</th>
               <th class="num">Limit – najwyższy</th>
-              <th class="num">Koszt kwal. potrzebny<br>do pełnego limitu</th>
               <th class="num">Dotacja [zł]</th>
+              <th class="num">Min. koszt = limit/%</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
           <tfoot>
             <tr>
-              <td colspan="4" class="num">SUMA</td>
-              <td class="num" id="sumaLimitMain">0</td>
-              <td class="num" id="sumaReqMain">0</td>
+              <td colspan="5" class="num">SUMA DOTACJI</td>
               <td class="num" id="suma">0</td>
+              <td class="num" id="needSumMainFoot">—</td>
               <td></td>
             </tr>
           </tfoot>
@@ -163,19 +161,20 @@
   </section>
 
   <!-- TAB: ENVELOPE -->
-  <section id="tab-envelope" class="hidden" role="tabpanel">
+  <section id="tab-envelope" class="hidden">
     <section class="panel">
       <div class="grid cols-2">
         <div>
-          <label for="euThreshold">Próg zapotrzebowania EU [kWh/m²·rok]</label>
-          <select id="euThreshold"><option value="LE">EU ≤ 140</option><option value="GT">EU &gt; 140</option></select>
+          <label>Próg zapotrzebowania EU [kWh/m²·rok]</label>
+          <select id="euThreshold">
+            <option value="LE">EU ≤ 140</option>
+            <option value="GT">EU &gt; 140</option>
+          </select>
         </div>
-        <div class="stat"><span class="pill">Bieżący próg:&nbsp;<span id="euLabel" class="value">EU ≤ 140</span></span></div>
-      </div>
-      <div class="summary">
-        <div class="badge">Limit łączny Ocieplenie/Stolarka/Wentylacja: <b id="sumCapLabel">—</b></div>
-        <div class="badge">Wymagany koszt kwal. (100%) dla SUMY limitów (envelope): <b id="needSumEnv">0 zł</b></div>
-        <div id="capWarn" class="badge warn hidden">Uwaga: suma dotacji przekracza limit grupowy – zastosowano ograniczenie.</div>
+        <div>
+          <span class="badge">Bieżący próg: <b id="euLabel">EU ≤ 140</b></span>
+          <span class="badge">Min. koszt by wykorzystać 100% limitu (ocieplenie): <b id="needSumEnv">—</b></span>
+        </div>
       </div>
       <div class="hr"></div>
       <div class="toolbar">
@@ -188,7 +187,7 @@
         <button id="btnExportEnvCSV" class="ghost">Eksport CSV (ocieplenie)</button>
       </div>
       <div class="small muted" style="margin-top:6px">
-        Wprowadź koszt oraz – jeśli dotyczy – powierzchnię i/lub sztuki z maks. stawkami zł/m² lub zł/szt. Dotacja = min(koszt_kwal × %, limit).
+        Wprowadź koszt i limity dla obu progów EU. Dotacja = min(koszt × % Twojego poziomu, limit dla wybranego progu).
       </div>
     </section>
 
@@ -197,33 +196,25 @@
         <table id="tblEnv">
           <thead>
             <tr>
-              <th style="min-width:200px">Pozycja (ściana/dach/okno…)</th>
+              <th style="min-width:220px">Pozycja (ściana/dach/okno…)</th>
               <th class="num">Koszt [zł]</th>
-              <th class="num">Pow. [m²]</th>
-              <th class="num">Szt.</th>
-              <th class="num">Max zł/m²</th>
-              <th class="num">Max zł/szt.</th>
               <th class="num">LE: Limit Podst.</th>
               <th class="num">LE: Limit Podwyższ.</th>
               <th class="num">LE: Limit Najwyższy</th>
               <th class="num">GT: Limit Podst.</th>
               <th class="num">GT: Limit Podwyższ.</th>
               <th class="num">GT: Limit Najwyższy</th>
-              <th class="num">Limit [zł]</th>
-              <th class="num">Koszt kwal. potrzebny<br>do pełnego limitu</th>
-              <th class="num">Koszt kwal.</th>
               <th class="num">Dotacja [zł]</th>
+              <th class="num">Min. koszt = limit/%</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="tbodyEnv"></tbody>
           <tfoot>
             <tr>
-              <td colspan="10" class="num">SUMY</td>
-              <td class="num" id="sumaLimitEnv">0</td>
-              <td class="num" id="sumaReqEnv">0</td>
-              <td class="num" id="sumaKwalEnv">0</td>
+              <td colspan="8" class="num">SUMA DOTACJI (ocieplenie/stolarka)</td>
               <td class="num" id="sumaEnv">0</td>
+              <td class="num" id="needSumEnvFoot">—</td>
               <td></td>
             </tr>
           </tfoot>
@@ -234,173 +225,130 @@
 </div>
 
 <script>
-console.log('CP kalkulator SUPER: JS działa ✔');
+'use strict';
 
-/* ========= KONFIGURACJA (z tabeli) ========= */
-const CFG = {
-  percent: { PODSTAWOWY: 0.40, PODWYŻSZONY: 0.70, NAJWYŻSZY: 1.00 },
-  income: {
-    single:   { basicMaxYear: 135000, midMaxPerCap: 3150, topMaxPerCap: 1800 },
-    multi:    {                    midMaxPerCap: 2250, topMaxPerCap: 1300 },
-    benefitsTop: true
-  },
-  presetMain: [
-    { n:'Audyt energetyczny',                                     c:0, l1:  480, l2:   840, l3:  1200 },
-    { n:'Świadectwo charakterystyki energetycznej',               c:0, l1:  160, l2:   280, l3:   400 },
-    { n:'Podłączenie do sieci ciepłowniczej wraz z przyłączem',   c:0, l1: 9800, l2: 15575, l3: 22250 },
-    { n:'Pompa ciepła powietrze/woda',                            c:0, l1:12600, l2: 22000, l3: 31500 },
-    { n:'PC pow./woda (wyższa klasa efektywności)',               c:0, l1:14080, l2: 24640, l3: 35200 },
-    { n:'Pompa ciepła powietrze/powietrze',                       c:0, l1: 4480, l2:  7840, l3: 11200 },
-    { n:'Gruntowa pompa ciepła (wyższa klasa efektywności)',      c:0, l1:18000, l2: 31500, l3: 45000 },
-    { n:'Dolne źródło ciepła (do gruntowej pompy ciepła)',        c:0, l1: 8000, l2: 14000, l3: 20000 },
-    { n:'Kocioł zgazowujący drewno (podwyższony standard)',       c:0, l1: 8200, l2: 14350, l3: 20500 },
-    { n:'Kocioł na pellet drzewny (podwyższony standard)',        c:0, l1:13000, l2: 18000, l3: 20000 },
-    { n:'Ogrzewanie elektryczne',                                 c:0, l1: 4480, l2:  7840, l3: 11200 },
-    { n:'Instalacja centralnego ogrzewania i ciepłej wody użytkowej', c:0, l1: 8200, l2: 14350, l3: 20500 }
-  ],
-  presetEnv: [
-    { n:'Ocieplenie stropów/poddaszy', c:0, area:0, units:0, capM2:  80, capUnit: 0 },
-    { n:'Ocieplenie podłóg',           c:0, area:0, units:0, capM2:  60, capUnit: 0 },
-    { n:'Ocieplenie ścian',            c:0, area:0, units:0, capM2: 120, capUnit: 0 },
-    { n:'Stolarka okienna',            c:0, area:0, units:0, capM2: 480, capUnit: 0 },
-    { n:'Stolarka drzwiowa',           c:0, area:0, units:0, capM2:1050, capUnit: 0 },
-    { n:'Bramy garażowe',              c:0, area:0, units:0, capM2: 600, capUnit: 0 },
-    { n:'Wentylacja mechaniczna z odzyskiem ciepła', c:0, area:0, units:0, capM2:0, capUnit:1400, le1:6680, le2:11690, le3:16700 }
-  ],
-  envelopeSumCap: { PODSTAWOWY: 19200, PODWYŻSZONY: 33600, NAJWYŻSZY: null }
-};
-
-/* ========= helpers ========= */
-const q  = s => document.querySelector(s);
+/* ===== helpers ===== */
+const q = s => document.querySelector(s);
 const qa = s => Array.from(document.querySelectorAll(s));
-const fmt = n => (isFinite(n) ? new Intl.NumberFormat('pl-PL',{maximumFractionDigits:0}).format(n) : '—');
+const fmt = n => (isFinite(n) ? new Intl.NumberFormat('pl-PL', {maximumFractionDigits:0}).format(n) : '—');
 const toNum = v => {
   if (typeof v !== 'string') return Number(v)||0;
-  v = v.replace(/\s+/g,'').replace(/\./g,'').replace(',', '.');
-  const num = parseFloat(v);
-  return isFinite(num) ? num : 0;
+  v = v.replace(/\u00A0/g,' ').replace(/\s+/g,'').replace(/\./g,'').replace(',', '.');
+  const num = parseFloat(v); return isFinite(num) ? num : 0;
 };
 function toast(msg, error=false){
   const t = document.createElement('div');
   t.textContent = msg;
-  Object.assign(t.style,{position:'fixed',right:'16px',bottom:'16px',background:error?'#9b2c2c':'#234b2f',border:'1px solid '+(error?'#ff8e9e':'#4caf79'),color:'#fff',padding:'10px 12px',borderRadius:'10px',boxShadow:'0 8px 22px #0008',zIndex:9999,opacity:'0',transition:'opacity .2s, transform .2s',transform:'translateY(6px)'});
+  Object.assign(t.style,{
+    position:'fixed',right:'16px',bottom:'16px',background:error?'#9b2c2c':'#234b2f',
+    border:'1px solid '+(error?'#ff8e9e':'#4caf79'),color:'#fff',padding:'10px 12px',
+    borderRadius:'10px',boxShadow:'0 8px 22px #0008',zIndex:9999,opacity:'0',
+    transition:'opacity .2s, transform .2s',transform:'translateY(6px)'
+  });
   document.body.appendChild(t);
-  requestAnimationFrame(()=>{ t.style.opacity='1'; t.style.transform='translateY(0)';});
+  requestAnimationFrame(()=>{ t.style.opacity='1'; t.style.transform='translateY(0)'; });
   setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(6px)'; setTimeout(()=>t.remove(),200); }, 1800);
 }
-function debounce(fn, ms=200){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
-const uuid = () => (crypto?.randomUUID?.() || 'id-'+Math.random().toString(36).slice(2));
-const reqCost = (limit, pct) => pct > 0 ? Math.ceil(toNum(limit) / pct) : 0;
 
-// walidacja liczb: >=0, usuwanie znaków nieliczbowych, zamiana przecinka na kropkę, trim
-function sanitizeNumberInput(el){
-  let v = (el.value||'').toString().replace(/\s+/g,'').replace(',', '.');
-  v = v.replace(/[^0-9.\-]/g,''); // tylko cyfry i kropka
-  if (v === '' || v === '.') v = '0';
-  const n = parseFloat(v);
-  if (!isFinite(n) || n < 0) { el.classList.add('error'); return 0; }
-  el.classList.remove('error'); return n;
-}
-
-/* ========= poziomy/progi ========= */
+/* ===== poziomy 2025 (skrót) ===== */
 function calcLevel({typ, mies, roczny, swiadczenia}) {
   const t = (typ||'').toUpperCase();
   const ben = (swiadczenia||'').toUpperCase()==='TAK';
   const m = toNum(mies), r = toNum(roczny);
-  if (ben && CFG.income.benefitsTop) return {name:'NAJWYŻSZY', pct:CFG.percent.NAJWYŻSZY, chip:'top'};
-  if ((t==='JEDNO' && m<=CFG.income.single.topMaxPerCap) || (t==='WIELO' && m<=CFG.income.multi.topMaxPerCap))
-    return {name:'NAJWYŻSZY', pct:CFG.percent.NAJWYŻSZY, chip:'top'};
-  if ((t==='JEDNO' && m<=CFG.income.single.midMaxPerCap) || (t==='WIELO' && m<=CFG.income.multi.midMaxPerCap))
-    return {name:'PODWYŻSZONY', pct:CFG.percent.PODWYŻSZONY, chip:'mid'};
-  if (r>0 && r<=CFG.income.single.basicMaxYear)
-    return {name:'PODSTAWOWY', pct:CFG.percent.PODSTAWOWY, chip:'basic'};
+  if (ben || (t==='JEDNO' && m<=1800) || (t==='WIELO' && m<=1300)) return {name:'NAJWYŻSZY', pct:1, chip:'top'};
+  if ((t==='JEDNO' && m<=3150) || (t==='WIELO' && m<=2250)) return {name:'PODWYŻSZONY', pct:0.7, chip:'mid'};
+  if (r>0 && r<=135000) return {name:'PODSTAWOWY', pct:0.4, chip:'basic'};
   return {name:'BRAK', pct:0, chip:'none'};
 }
 
-/* ========= Zakładki ========= */
+/* ===== tabs ===== */
 qa('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    qa('.tab-btn').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-    btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+    qa('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
     const tab = btn.dataset.tab;
     q('#tab-main').classList.toggle('hidden', tab!=='main');
     q('#tab-envelope').classList.toggle('hidden', tab!=='envelope');
   });
 });
 
-/* ========= GŁÓWNY ========= */
+/* ===== MAIN: dane bazowe (z tabeli programu) ===== */
 let rows = [];
-const PRESET = CFG.presetMain.map(x=>({...x}));
-const renderMainDebounced = debounce(renderMain, 200);
+const PRESET = [
+  {n:'Audyt energetyczny',                c:0, l1:480,   l2:840,   l3:1200},
+  {n:'Świadectwo charakterystyki energ.', c:0, l1:160,   l2:280,   l3:400},
+  {n:'Podłączenie do sieci ciepłowniczej',c:0, l1:9800,  l2:15575, l3:22250},
+  {n:'Pompa ciepła powietrze/woda',       c:0, l1:12600, l2:22000, l3:31500},
+  {n:'PC pow./woda (wyższa klasa)',       c:0, l1:14080, l2:24640, l3:35200},
+  {n:'Pompa ciepła powietrze/powietrze',  c:0, l1:4480,  l2:7840,  l3:11200},
+  {n:'Gruntowa PC (wyższa klasa)',        c:0, l1:18000, l2:31500, l3:45000},
+  {n:'Dolne źródło (odwierty)',           c:0, l1:8200,  l2:14350, l3:20500},
+  {n:'Fotowoltaika (PV)',                 c:0, l1:6000,  l2:9000,  l3:15000}
+];
+
+const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : 'id_'+Math.random().toString(36).slice(2));
+
+function addRow(d={n:'Nowa pozycja', c:0, l1:0, l2:0, l3:0}){ rows.push({...d, id:uid()}); renderMain(); saveMain(false); }
+function delRow(id){ rows = rows.filter(r=>r.id!==id); renderMain(); saveMain(false); }
+
+function limForLevel(r, levelName){
+  if (levelName==='PODSTAWOWY') return toNum(r.l1);
+  if (levelName==='PODWYŻSZONY') return toNum(r.l2);
+  if (levelName==='NAJWYŻSZY')   return toNum(r.l3);
+  return 0;
+}
 
 function computeDotacjaMain(r, level){
-  const koszt = toNum(r.c), pct = level.pct;
-  const lim = level.name==='PODSTAWOWY' ? toNum(r.l1) : level.name==='PODWYŻSZONY' ? toNum(r.l2) : level.name==='NAJWYŻSZY' ? toNum(r.l3) : 0;
-  return Math.min(koszt * pct, lim);
+  const koszt = toNum(r.c), lim = limForLevel(r, level.name);
+  return Math.min(koszt * level.pct, lim);
 }
-function addRow(d={n:'Nowa pozycja', c:0, l1:0, l2:0, l3:0}){ rows.push({...d, id:uuid()}); renderMain(); saveMain(false); }
-function delRow(id){ rows = rows.filter(r=>r.id!==id); renderMain(); saveMain(false); }
 
 function renderMain(){
   const level = calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
-  const chip = q('#poziom_chip'); chip.textContent = level.name; chip.className = 'value chip '+(level.chip||'none');
+  const chip = q('#poziom_chip'); chip.textContent = level.name; chip.className = 'chip '+(level.chip||'none');
   q('#procent').textContent = level.pct ? (level.pct*100).toFixed(0)+'%' : '—';
-  q('#badgeLevelName').textContent = level.name; q('#badgeLevelPct').textContent = Math.round(level.pct*100)+'%';
 
   const tb = q('#tbody'); tb.innerHTML = '';
-  let suma = 0, sumaLimitMain = 0, sumaReqMain = 0;
+  let suma = 0, sumLimit = 0;
   rows.forEach(r=>{
+    const lim = limForLevel(r, level.name); sumLimit += lim;
     const tr = document.createElement('tr');
 
-    const tdN = document.createElement('td'); 
-    const iN = document.createElement('input'); iN.value=r.n; 
-    iN.oninput=e=>{r.n=e.target.value; saveMain(false)};
+    const tdN = document.createElement('td');
+    const iN = document.createElement('input'); iN.value=r.n; iN.oninput=e=>{r.n=e.target.value; saveMain(false)};
     tdN.append(iN);
 
     const tdC = document.createElement('td'); tdC.className='num';
-    const iC=document.createElement('input'); iC.className='num'; iC.value=r.c;
-    iC.oninput=e=>{ r.c=e.target.value; sanitizeNumberInput(iC); renderMainDebounced(); saveMain(false) };
-    tdC.append(iC);
+    const iC=document.createElement('input'); iC.className='num'; iC.value=r.c; iC.inputMode='decimal';
+    iC.oninput=e=>{r.c=e.target.value; renderMain(); saveMain(false)}; tdC.append(iC);
 
     const tdl1=document.createElement('td'); tdl1.className='num';
-    const inpl1=document.createElement('input'); inpl1.className='num'; inpl1.value=r.l1;
-    inpl1.oninput=e=>{ r.l1=e.target.value; sanitizeNumberInput(inpl1); renderMainDebounced(); saveMain(false) };
-    tdl1.append(inpl1);
+    const inpl1=document.createElement('input'); inpl1.className='num'; inpl1.value=r.l1; inpl1.inputMode='decimal';
+    inpl1.oninput=e=>{r.l1=e.target.value; renderMain(); saveMain(false)}; tdl1.append(inpl1);
 
     const tdl2=document.createElement('td'); tdl2.className='num';
-    const inpl2=document.createElement('input'); inpl2.className='num'; inpl2.value=r.l2;
-    inpl2.oninput=e=>{ r.l2=e.target.value; sanitizeNumberInput(inpl2); renderMainDebounced(); saveMain(false) };
-    tdl2.append(inpl2);
+    const inpl2=document.createElement('input'); inpl2.className='num'; inpl2.value=r.l2; inpl2.inputMode='decimal';
+    inpl2.oninput=e=>{r.l2=e.target.value; renderMain(); saveMain(false)}; tdl2.append(inpl2);
 
     const tdl3=document.createElement('td'); tdl3.className='num';
-    const inpl3=document.createElement('input'); inpl3.className='num'; inpl3.value=r.l3;
-    inpl3.oninput=e=>{ r.l3=e.target.value; sanitizeNumberInput(inpl3); renderMainDebounced(); saveMain(false) };
-    tdl3.append(inpl3);
+    const inpl3=document.createElement('input'); inpl3.className='num'; inpl3.value=r.l3; inpl3.inputMode='decimal';
+    inpl3.oninput=e=>{r.l3=e.target.value; renderMain(); saveMain(false)}; tdl3.append(inpl3);
 
-    const limRow = (level.name==='PODSTAWOWY' ? toNum(r.l1)
-                 : level.name==='PODWYŻSZONY' ? toNum(r.l2)
-                 : level.name==='NAJWYŻSZY'   ? toNum(r.l3) : 0);
-    const needRow = reqCost(limRow, level.pct);
+    const kw = computeDotacjaMain(r, level);
+    const tdD=document.createElement('td'); tdD.className='num'; tdD.textContent=fmt(kw);
 
-    const tdNeed=document.createElement('td'); tdNeed.className='num'; tdNeed.textContent=fmt(needRow);
+    const tdNeed=document.createElement('td'); tdNeed.className='num';
+    tdNeed.textContent = level.pct>0 ? fmt(Math.ceil(lim/level.pct)) : '—';
 
-    const tdD=document.createElement('td'); tdD.className='num';
-    const kwota=computeDotacjaMain(r,level); tdD.textContent=fmt(kwota);
+    const tdA=document.createElement('td'); const btn=document.createElement('button'); btn.className='ghost'; btn.textContent='Usuń';
+    btn.onclick=()=>delRow(r.id); tdA.append(btn);
 
-    const tdA=document.createElement('td'); 
-    const btn=document.createElement('button'); btn.className='ghost'; btn.textContent='Usuń'; btn.onclick=()=>delRow(r.id); 
-    tdA.append(btn);
-
-    tr.append(tdN,tdC,tdl1,tdl2,tdl3,tdNeed,tdD,tdA); 
-    tb.append(tr); 
-    suma          += kwota;
-    sumaLimitMain += limRow;
-    sumaReqMain   += needRow;
+    tr.append(tdN,tdC,tdl1,tdl2,tdl3,tdD,tdNeed,tdA);
+    tb.append(tr); suma+=kw;
   });
-  q('#suma').textContent          = fmt(suma);
-  q('#sumaLimitMain').textContent = fmt(sumaLimitMain);
-  q('#sumaReqMain').textContent   = fmt(sumaReqMain);
-  q('#needSumMain').textContent   = fmt(sumaReqMain) + ' zł';
+  q('#suma').textContent = fmt(suma);
+  const needed = (sumLimit>0 && level.pct>0) ? Math.ceil(sumLimit/level.pct) : 0;
+  q('#needSumMain').textContent = needed ? fmt(needed)+' zł' : '—';
+  q('#needSumMainFoot').textContent = needed ? fmt(needed) : '—';
 }
 
 function saveMain(show=true){
@@ -408,289 +356,168 @@ function saveMain(show=true){
   localStorage.setItem('cp2025_main', JSON.stringify(payload)); if(show) toast('Zapisano (główna).');
 }
 function loadMain(){
-  const raw = localStorage.getItem('cp2025_main'); 
-  if(!raw){ toast('Brak zapisu (główna).'); return; }
-  try{ 
+  const raw = localStorage.getItem('cp2025_main'); if(!raw){ toast('Brak zapisu (główna).'); return; }
+  try{
     const p = JSON.parse(raw);
-    q('#typ').value         = p.typ   ?? '';
-    q('#osoby').value       = p.osoby ?? '';
-    q('#doch_mies').value   = p.mies  ?? '';
-    q('#doch_roczny').value = p.roczny?? '';
-    q('#swiadczenia').value = p.swiad ?? '';
-    rows = Array.isArray(p.rows)? p.rows : []; 
-    renderMain(); 
-    toast('Wczytano (główna).');
+    q('#typ').value=p.typ||''; q('#osoby').value=p.osoby||''; q('#doch_mies').value=p.mies||''; q('#doch_roczny').value=p.roczny||''; q('#swiadczenia').value=p.swiad||'';
+    rows = Array.isArray(p.rows)? p.rows : []; renderMain(); toast('Wczytano (główna).');
   }catch{ toast('Nie udało się wczytać (główna).', true); }
 }
 function resetMain(){ localStorage.removeItem('cp2025_main'); q('#typ').value=''; q('#osoby').value=''; q('#doch_mies').value=''; q('#doch_roczny').value=''; q('#swiadczenia').value=''; presetMain(); renderMain(); }
-function presetMain(){ rows=[]; PRESET.forEach(p=>rows.push({...p, id:uuid()})); }
+function presetMain(){ rows=[]; PRESET.forEach(p=>rows.push({...p, id:uid()})); }
 
-/* ========= OCIEPLENIE / STOLARKA ========= */
+/* ===== ENVELOPE (ocieplenie/stolarka) ===== */
 let envRows = [];
-const PRESET_ENV = CFG.presetEnv.map(x=>({...x}));
-const renderEnvDebounced = debounce(renderEnv, 200);
+const PRESET_ENV = [
+  {n:'Ściany zewnętrzne', c:0, le1:12000, le2:21000, le3:30000, gt1:14000, gt2:24500, gt3:35000},
+  {n:'Dach / stropodach', c:0, le1:10000, le2:17500, le3:25000, gt1:12000, gt2:21000, gt3:30000},
+  {n:'Podłoga na gruncie', c:0, le1:5000,  le2:8750,  le3:12500, gt1:6000,  gt2:10500, gt3:15000},
+  {n:'Okna',               c:0, le1:6000,  le2:10500, le3:15000, gt1:7000,  gt2:12250, gt3:17500},
+  {n:'Drzwi zewnętrzne',   c:0, le1:2500,  le2:4375,  le3:6250,  gt1:3000,  gt2:5250,  gt3:7500},
+];
 
-function limitProgramowy(r, level, mode){
+function addEnvRow(d={n:'Nowa pozycja', c:0, le1:0, le2:0, le3:0, gt1:0, gt2:0, gt3:0}){ envRows.push({...d, id:uid()}); renderEnv(); saveEnv(false); }
+function delEnvRow(id){ envRows = envRows.filter(r=>r.id!==id); renderEnv(); saveEnv(false); }
+
+function currentLimitSet(r, level, mode){
   const l1 = mode==='LE' ? r.le1 : r.gt1;
   const l2 = mode==='LE' ? r.le2 : r.gt2;
   const l3 = mode==='LE' ? r.le3 : r.gt3;
-  const lim = (level.name==='PODSTAWOWY' ? toNum(l1) : level.name==='PODWYŻSZONY' ? toNum(l2) : level.name==='NAJWYŻSZY' ? toNum(l3) : 0);
-  return lim||0;
+  if (level.name==='PODSTAWOWY') return toNum(l1);
+  if (level.name==='PODWYŻSZONY') return toNum(l2);
+  if (level.name==='NAJWYŻSZY')   return toNum(l3);
+  return 0;
 }
-function kosztKwalifikowany(r){
-  const koszt = toNum(r.c);
-  const capM2Total   = toNum(r.area)  * toNum(r.capM2);
-  const capUnitTotal = toNum(r.units) * toNum(r.capUnit);
-  const capSum = (capM2Total || 0) + (capUnitTotal || 0);
-  if (!capSum && !koszt) return 0;
-  if (!capSum) return koszt;
-  if (!koszt)  return capSum;
-  return Math.min(koszt, capSum);
-}
-const kvalDot = (kwal, pct, lim) => Math.min(kwal * pct, lim || (kwal * pct));
 
-function addEnvRow(d={n:'Nowa pozycja', c:0, area:0, units:0, capM2:0, capUnit:0, le1:0,le2:0,le3:0, gt1:0,gt2:0,gt3:0}){ envRows.push({...d, id:uuid()}); renderEnv(); saveEnv(false); }
-function delEnvRow(id){ envRows = envRows.filter(r=>r.id!==id); renderEnv(); saveEnv(false); }
+function computeDotacjaEnv(r, level, mode){
+  const koszt = toNum(r.c), lim = currentLimitSet(r, level, mode);
+  return Math.min(koszt * level.pct, lim);
+}
 
 function renderEnv(){
-  const mode = q('#euThreshold').value; 
-  q('#euLabel').textContent = mode==='LE' ? 'EU ≤ 140' : 'EU > 140';
+  const mode = q('#euThreshold').value; q('#euLabel').textContent = mode==='LE' ? 'EU ≤ 140' : 'EU > 140';
   const level = calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
+  const tb = q('#tbodyEnv'); tb.innerHTML=''; let suma=0, sumLimit=0;
 
-  const capMap = CFG.envelopeSumCap;
-  const cap = level.name==='PODSTAWOWY' ? capMap.PODSTAWOWY
-            : level.name==='PODWYŻSZONY' ? capMap.PODWYŻSZONY
-            : capMap.NAJWYŻSZY; // null → brak ograniczenia
-  q('#sumCapLabel').textContent = cap ? fmt(cap)+' zł' : '—';
-
-  const tb = q('#tbodyEnv'); tb.innerHTML=''; 
-  let suma=0, sumaLimit=0, sumaReq=0, sumaKwal=0;
   envRows.forEach(r=>{
-    const tr=document.createElement('tr');
+    const tr = document.createElement('tr');
 
-    const tdN=document.createElement('td'); 
-    const iN=document.createElement('input'); iN.value=r.n; iN.oninput=e=>{r.n=e.target.value; saveEnv(false)}; tdN.append(iN);
+    const tdN = document.createElement('td'); const iN = document.createElement('input'); iN.value=r.n; iN.oninput=e=>{r.n=e.target.value; saveEnv(false)}; tdN.append(iN);
+    const tdC = document.createElement('td'); tdC.className='num'; const iC=document.createElement('input'); iC.className='num'; iC.value=r.c; iC.inputMode='decimal'; iC.oninput=e=>{r.c=e.target.value; renderEnv(); saveEnv(false)}; tdC.append(iC);
 
-    const tdC=document.createElement('td'); tdC.className='num';
-    const iC=document.createElement('input'); iC.className='num'; iC.value=r.c; iC.oninput=e=>{ r.c=e.target.value; sanitizeNumberInput(iC); renderEnvDebounced(); saveEnv(false)}; tdC.append(iC);
+    const tdLE1=document.createElement('td'); tdLE1.className='num'; const iLE1=document.createElement('input'); iLE1.className='num'; iLE1.value=r.le1; iLE1.inputMode='decimal'; iLE1.oninput=e=>{r.le1=e.target.value; renderEnv(); saveEnv(false)}; tdLE1.append(iLE1);
+    const tdLE2=document.createElement('td'); tdLE2.className='num'; const iLE2=document.createElement('input'); iLE2.className='num'; iLE2.value=r.le2; iLE2.inputMode='decimal'; iLE2.oninput=e=>{r.le2=e.target.value; renderEnv(); saveEnv(false)}; tdLE2.append(iLE2);
+    const tdLE3=document.createElement('td'); tdLE3.className='num'; const iLE3=document.createElement('input'); iLE3.className='num'; iLE3.value=r.le3; iLE3.inputMode='decimal'; iLE3.oninput=e=>{r.le3=e.target.value; renderEnv(); saveEnv(false)}; tdLE3.append(iLE3);
 
-    const tdA=document.createElement('td'); tdA.className='num';
-    const iA=document.createElement('input'); iA.className='num'; iA.value=r.area||0; iA.oninput=e=>{ r.area=e.target.value; sanitizeNumberInput(iA); renderEnvDebounced(); saveEnv(false)}; tdA.append(iA);
+    const tdGT1=document.createElement('td'); tdGT1.className='num'; const iGT1=document.createElement('input'); iGT1.className='num'; iGT1.value=r.gt1; iGT1.inputMode='decimal'; iGT1.oninput=e=>{r.gt1=e.target.value; renderEnv(); saveEnv(false)}; tdGT1.append(iGT1);
+    const tdGT2=document.createElement('td'); tdGT2.className='num'; const iGT2=document.createElement('input'); iGT2.className='num'; iGT2.value=r.gt2; iGT2.inputMode='decimal'; iGT2.oninput=e=>{r.gt2=e.target.value; renderEnv(); saveEnv(false)}; tdGT2.append(iGT2);
+    const tdGT3=document.createElement('td'); tdGT3.className='num'; const iGT3=document.createElement('input'); iGT3.className='num'; iGT3.value=r.gt3; iGT3.inputMode='decimal'; iGT3.oninput=e=>{r.gt3=e.target.value; renderEnv(); saveEnv(false)}; tdGT3.append(iGT3);
 
-    const tdU=document.createElement('td'); tdU.className='num';
-    const iU=document.createElement('input'); iU.className='num'; iU.value=r.units||0; iU.oninput=e=>{ r.units=e.target.value; sanitizeNumberInput(iU); renderEnvDebounced(); saveEnv(false)}; tdU.append(iU);
+    const kw = computeDotacjaEnv(r, level, mode);
+    const tdD=document.createElement('td'); tdD.className='num'; tdD.textContent=fmt(kw);
 
-    const tdCapM2=document.createElement('td'); tdCapM2.className='num';
-    const iCapM2=document.createElement('input'); iCapM2.className='num'; iCapM2.value=r.capM2||0; iCapM2.oninput=e=>{ r.capM2=e.target.value; sanitizeNumberInput(iCapM2); renderEnvDebounced(); saveEnv(false)}; tdCapM2.append(iCapM2);
+    const lim = currentLimitSet(r, level, mode); sumLimit += lim;
+    const tdNeed=document.createElement('td'); tdNeed.className='num'; tdNeed.textContent = level.pct>0 ? fmt(Math.ceil(lim/level.pct)) : '—';
 
-    const tdCapU=document.createElement('td'); tdCapU.className='num';
-    const iCapU=document.createElement('input'); iCapU.className='num'; iCapU.value=r.capUnit||0; iCapU.oninput=e=>{ r.capUnit=e.target.value; sanitizeNumberInput(iCapU); renderEnvDebounced(); saveEnv(false)}; tdCapU.append(iCapU);
+    const tdA=document.createElement('td'); const btn=document.createElement('button'); btn.className='ghost'; btn.textContent='Usuń'; btn.onclick=()=>delEnvRow(r.id); tdA.append(btn);
 
-    const tdLE1=document.createElement('td'); tdLE1.className='num'; const iLE1=document.createElement('input'); iLE1.className='num'; iLE1.value=r.le1||0; iLE1.oninput=e=>{ r.le1=e.target.value; sanitizeNumberInput(iLE1); renderEnvDebounced(); saveEnv(false)}; tdLE1.append(iLE1);
-    const tdLE2=document.createElement('td'); tdLE2.className='num'; const iLE2=document.createElement('input'); iLE2.className='num'; iLE2.value=r.le2||0; iLE2.oninput=e=>{ r.le2=e.target.value; sanitizeNumberInput(iLE2); renderEnvDebounced(); saveEnv(false)}; tdLE2.append(iLE2);
-    const tdLE3=document.createElement('td'); tdLE3.className='num'; const iLE3=document.createElement('input'); iLE3.className='num'; iLE3.value=r.le3||0; iLE3.oninput=e=>{ r.le3=e.target.value; sanitizeNumberInput(iLE3); renderEnvDebounced(); saveEnv(false)}; tdLE3.append(iLE3);
-
-    const tdGT1=document.createElement('td'); tdGT1.className='num'; const iGT1=document.createElement('input'); iGT1.className='num'; iGT1.value=r.gt1||0; iGT1.oninput=e=>{ r.gt1=e.target.value; sanitizeNumberInput(iGT1); renderEnvDebounced(); saveEnv(false)}; tdGT1.append(iGT1);
-    const tdGT2=document.createElement('td'); tdGT2.className='num'; const iGT2=document.createElement('input'); iGT2.className='num'; iGT2.value=r.gt2||0; iGT2.oninput=e=>{ r.gt2=e.target.value; sanitizeNumberInput(iGT2); renderEnvDebounced(); saveEnv(false)}; tdGT2.append(iGT2);
-    const tdGT3=document.createElement('td'); tdGT3.className='num'; const iGT3=document.createElement('input'); iGT3.className='num'; iGT3.value=r.gt3||0; iGT3.oninput=e=>{ r.gt3=e.target.value; sanitizeNumberInput(iGT3); renderEnvDebounced(); saveEnv(false)}; tdGT3.append(iGT3);
-
-    const kwal = kosztKwalifikowany(r);
-    const limRow  = limitProgramowy(r, level, mode);
-    const needRow = reqCost(limRow || (kwal*level.pct), level.pct);
-
-    const tdLim  = document.createElement('td');  tdLim.className='num';  tdLim.textContent  = fmt(limRow);
-    const tdNeed = document.createElement('td');  tdNeed.className='num'; tdNeed.textContent = fmt(needRow);
-
-    const tdKwal=document.createElement('td'); tdKwal.className='num'; tdKwal.textContent = fmt(kwal);
-
-    const dot = Math.min(kwal * level.pct, limRow || (kwal * level.pct));
-    const tdD=document.createElement('td'); tdD.className='num'; tdD.textContent=fmt(dot);
-
-    const tdAbtn=document.createElement('td'); 
-    const btn=document.createElement('button'); btn.className='ghost'; btn.textContent='Usuń'; btn.onclick=()=>delEnvRow(r.id); 
-    tdAbtn.append(btn);
-
-    tr.append(tdN,tdC,tdA,tdU,tdCapM2,tdCapU,
-              tdLE1,tdLE2,tdLE3,tdGT1,tdGT2,tdGT3,
-              tdLim,tdNeed,tdKwal,tdD,tdAbtn); 
-    tb.append(tr); 
-
-    suma       += dot;
-    sumaLimit  += (limRow||0);
-    sumaReq    += (needRow||0);
-    sumaKwal   += (kwal||0);
+    tr.append(tdN,tdC,tdLE1,tdLE2,tdLE3,tdGT1,tdGT2,tdGT3,tdD,tdNeed,tdA); tb.append(tr); suma+=kw;
   });
 
-  q('#sumaLimitEnv').textContent = fmt(sumaLimit);
-  q('#sumaReqEnv').textContent   = fmt(sumaReq);
-  q('#sumaKwalEnv').textContent  = fmt(sumaKwal);
-
-  const capped = cap ? Math.min(suma, cap) : suma;
-  q('#sumaEnv').textContent = fmt(capped);
-  q('#needSumEnv').textContent = fmt(sumaReq) + ' zł';
-  q('#capWarn').classList.toggle('hidden', !(cap && suma>cap));
+  q('#sumaEnv').textContent = fmt(suma);
+  const needed = (sumLimit>0 && level.pct>0) ? Math.ceil(sumLimit/level.pct) : 0;
+  q('#needSumEnv').textContent = needed ? fmt(needed)+' zł' : '—';
+  q('#needSumEnvFoot').textContent = needed ? fmt(needed) : '—';
 }
 
 function saveEnv(show=true){ localStorage.setItem('cp2025_env', JSON.stringify({mode:q('#euThreshold').value, envRows})); if(show) toast('Zapisano (ocieplenie/stolarka).'); }
 function loadEnv(){
-  const raw = localStorage.getItem('cp2025_env'); 
-  if(!raw){ toast('Brak zapisu (ocieplenie).'); return; }
-  try{ 
-    const p = JSON.parse(raw); 
-    q('#euThreshold').value = p.mode || 'LE'; 
-    envRows = Array.isArray(p.envRows)? p.envRows : []; 
-    renderEnv(); 
-    toast('Wczytano (ocieplenie).'); 
-  } catch { toast('Nie udało się wczytać (ocieplenie).', true); }
+  const raw = localStorage.getItem('cp2025_env'); if(!raw){ toast('Brak zapisu (ocieplenie).'); return; }
+  try{ const p = JSON.parse(raw); q('#euThreshold').value = p.mode||'LE'; envRows = Array.isArray(p.envRows)? p.envRows : []; renderEnv(); toast('Wczytano (ocieplenie).'); }
+  catch{ toast('Nie udało się wczytać (ocieplenie).', true); }
 }
 function resetEnv(){ localStorage.removeItem('cp2025_env'); q('#euThreshold').value='LE'; presetEnv(); renderEnv(); }
-function presetEnv(){ envRows=[]; PRESET_ENV.forEach(p=>rowsPushSafe(envRows,{...p, id:uuid()})); }
-function rowsPushSafe(arr,obj){ arr.push(obj); }
+function presetEnv(){ envRows=[]; PRESET_ENV.forEach(p=>envRows.push({...p, id:uid()})); }
 
-/* ========= Presety (szybkie) ========= */
-function applyPreset(levelName){
-  // przykładowe zestawy – możesz spersonalizować
-  presetMain();
-  if(levelName==='PODSTAWOWY'){
-    rows.find(r=>r.n.includes('Pompa ciepła powietrze/woda')).c = 30000;
-  }else if(levelName==='PODWYŻSZONY'){
-    rows.find(r=>r.n.includes('Pompa ciepła powietrze/woda')).c = 45000;
-    rows.find(r=>r.n.includes('Fotowoltaika'))?.c || rows.push({n:'Fotowoltaika (PV)', c:15000,l1:6000,l2:9000,l3:15000,id:uuid()});
-  }else if(levelName==='NAJWYŻSZY'){
-    rows.find(r=>r.n.includes('Gruntowa pompa'))?.c || rows.push({n:'Gruntowa pompa ciepła (wyższa klasa efektywności)', c:60000,l1:18000,l2:31500,l3:45000,id:uuid()});
-  }
-  renderMain(); saveMain(false);
-}
+/* ===== JSON / CSV ===== */
+q('#btnExportMain').addEventListener('click', ()=>{ saveMain(false); const blob=new Blob([localStorage.getItem('cp2025_main')||'{}'],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='cp2025_main.json'; a.click(); URL.revokeObjectURL(a.href); });
+q('#fileImportMain').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ localStorage.setItem('cp2025_main', r.result); loadMain(); }catch{ toast('Import nieudany', true);} }; r.readAsText(f); });
 
-/* ========= JSON / CSV ========= */
-q('#btnExportMain').addEventListener('click', ()=>{
-  saveMain(false);
-  const blob=new Blob([localStorage.getItem('cp2025_main')||'{}'],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='cp2025_main.json'; a.click();
-});
-q('#fileImportMain').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f) return; const r=new FileReader();
-  r.onload=()=>{ try{ localStorage.setItem('cp2025_main', r.result); loadMain(); }catch{ toast('Import nieudany', true);} };
-  r.readAsText(f);
-});
-q('#btnExportEnv').addEventListener('click', ()=>{
-  saveEnv(false);
-  const blob=new Blob([localStorage.getItem('cp2025_env')||'{}'],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='cp2025_ocieplenie.json'; a.click();
-});
-q('#fileImportEnv').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f) return; const r=new FileReader();
-  r.onload=()=>{ try{ localStorage.setItem('cp2025_env', r.result); loadEnv(); }catch{ toast('Import nieudany', true);} };
-  r.readAsText(f);
-});
-function csvEscape(v) {
+q('#btnExportEnv').addEventListener('click', ()=>{ saveEnv(false); const blob=new Blob([localStorage.getItem('cp2025_env')||'{}'],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='cp2025_ocieplenie.json'; a.click(); URL.revokeObjectURL(a.href); });
+q('#fileImportEnv').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ localStorage.setItem('cp2025_env', r.result); loadEnv(); }catch{ toast('Import nieudany', true);} }; r.readAsText(f); });
+
+function csvEscape(v){
   const s = String(v ?? '');
-  return /[",,;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  if (typeof s !== 'string') return s;
+  return /[",;\n]/.test(s) ? "${s.replace(/"/g,'""')}" : s;
 }
 function downloadCSV(name, rowsOut){
-  const csv  = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
-  a.download = name.endsWith('.csv') ? name : `${name}.csv`;
+  const csv = rowsOut.map(r => r.map(csvEscape).join(';')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name.endsWith('.csv') ? name : ${name}.csv;
   a.click();
   URL.revokeObjectURL(a.href);
 }
+
 function exportMainCSV(){
   const level = calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
-  const out=[['Zakres','Koszt [zł]','Limit PODST.','Limit PODWYŻSZ.','Limit NAJWYŻSZY','Koszt kwal. potrzebny (100%)','Dotacja [zł]']]; 
-  let suma=0, sumaLim=0, sumaNeed=0;
-  rows.forEach(r=>{
-    const koszt=toNum(r.c);
-    const lim = level.name==='PODSTAWOWY'?toNum(r.l1):level.name==='PODWYŻSZONY'?toNum(r.l2):level.name==='NAJWYŻSZY'?toNum(r.l3):0;
-    const need=reqCost(lim, level.pct);
-    const dot=Math.min(koszt*level.pct, lim); 
-    suma+=dot; sumaLim+=lim; sumaNeed+=need;
-    out.push([r.n,koszt,r.l1,r.l2,r.l3,need,Math.round(dot)]);
-  });
-  out.push(['SUMA','','','','',Math.round(sumaNeed),Math.round(suma)]);
-  downloadCSV('cp2025_glowna', out);
+  const out=[['Zakres','Koszt [zł]','Limit PODST.','Limit PODWYŻSZ.','Limit NAJWYŻSZY','Dotacja [zł]','Min. koszt (limit/% )']]; let suma=0;
+  rows.forEach(r=>{ const koszt=toNum(r.c); const lim=limForLevel(r, level.name); const dot=Math.min(koszt*level.pct,lim); suma+=dot; out.push([r.n,koszt,r.l1,r.l2,r.l3,Math.round(dot), level.pct>0?Math.ceil(lim/level.pct):'—']); });
+  out.push(['SUMA','','','','',Math.round(suma),'']); downloadCSV('cp2025_glowna', out);
 }
 function exportEnvCSV(){
   const mode=q('#euThreshold').value, level=calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
-  const out=[['Pozycja','Koszt [zł]','Pow. [m²]','Szt.','Max zł/m²','Max zł/szt.','LE: Limit Podst.','LE: Limit Podwyższ.','LE: Limit Najwyższy','GT: Limit Podst.','GT: Limit Podwyższ.','GT: Limit Najwyższy','Limit [zł]','Koszt kwal. potrzebny (100%)','Koszt kwal.','Dotacja [zł]']]; 
-  let suma=0, sumaLim=0, sumaNeed=0, sumaKwal=0;
-  envRows.forEach(r=>{
-    const kwal = kosztKwalifikowany(r);
-    const lim  = limitProgramowy(r, level, mode);
-    const need = reqCost(lim || (kwal*level.pct), level.pct);
-    const dot  = Math.min(kwal*level.pct, lim || (kwal*level.pct));
-    suma+=dot; sumaLim+=(lim||0); sumaNeed+=(need||0); sumaKwal+=kwal;
-    out.push([r.n, toNum(r.c), toNum(r.area), toNum(r.units), toNum(r.capM2), toNum(r.capUnit), r.le1||0,r.le2||0,r.le3||0,r.gt1||0,r.gt2||0,r.gt3||0, Math.round(lim||0), Math.round(need||0), Math.round(kwal), Math.round(dot)]);
-  });
-  out.push(['SUMA','','','','','','','','','','','', Math.round(sumaLim), Math.round(sumaNeed), Math.round(sumaKwal), Math.round(suma)]);
-  downloadCSV('cp2025_ocieplenie', out);
+  const out=[['Pozycja','Koszt [zł]','LE: Limit Podst.','LE: Limit Podwyższ.','LE: Limit Najwyższy','GT: Limit Podst.','GT: Limit Podwyższ.','GT: Limit Najwyższy','Dotacja [zł]','Min. koszt (limit/% )']]; let suma=0;
+  envRows.forEach(r=>{ const koszt=toNum(r.c); const lim=currentLimitSet(r,level,mode); const dot=Math.min(koszt*level.pct,lim); suma+=dot;
+    out.push([r.n,koszt,r.le1,r.le2,r.le3,r.gt1,r.gt2,r.gt3,Math.round(dot), level.pct>0?Math.ceil(lim/level.pct):'—']); });
+  out.push(['SUMA','','','','','','','',Math.round(suma),'']); downloadCSV('cp2025_ocieplenie', out);
 }
 function exportAllCSV(){
-  const level=calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value }); 
-  const mode=q('#euThreshold').value;
+  const level=calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value }); const mode=q('#euThreshold').value;
   const out=[];
   out.push(['Metryczka']); out.push(['Typ gospodarstwa', q('#typ').value]); out.push(['Osób', q('#osoby').value]); out.push(['Dochód/os (mies.)', q('#doch_mies').value]); out.push(['Dochód roczny', q('#doch_roczny').value]); out.push(['Świadczenia', q('#swiadczenia').value]); out.push(['Poziom', level.name]); out.push(['Procent', (level.pct*100||0)+'%']); out.push(['']);
-
-  out.push(['Kalkulator główny']); out.push(['Zakres','Koszt [zł]','Limit PODST.','Limit PODWYŻSZ.','Limit NAJWYŻSZY','Koszt kwal. potrzebny (100%)','Dotacja [zł]']); 
-  let sumaMain=0, sumaLimMain=0, sumaNeedMain=0;
-  rows.forEach(r=>{
-    const koszt=toNum(r.c);
-    const lim=level.name==='PODSTAWOWY'?toNum(r.l1):level.name==='PODWYŻSZONY'?toNum(r.l2):level.name==='NAJWYŻSZY'?toNum(r.l3):0;
-    const need=reqCost(lim, level.pct);
-    const dot=Math.min(koszt*level.pct,lim); sumaMain+=dot; sumaLimMain+=lim; sumaNeedMain+=need;
-    out.push([r.n,koszt,r.l1,r.l2,r.l3,Math.round(need),Math.round(dot)]);
-  });
-  out.push(['SUMA','','','','',Math.round(sumaNeedMain),Math.round(sumaMain)]);
-  out.push(['']);
-
-  out.push(['Ocieplenie/Stolarka (tryb: '+(mode==='LE'?'EU ≤ 140':'EU > 140')+')']); 
-  out.push(['Pozycja','Koszt [zł]','Pow. [m²]','Szt.','Max zł/m²','Max zł/szt.','LE: Limit Podst.','LE: Limit Podwyższ.','LE: Limit Najwyższy','GT: Limit Podst.','GT: Limit Podwyższ.','GT: Limit Najwyższy','Limit [zł]','Koszt kwal. potrzebny (100%)','Koszt kwal.','Dotacja [zł]']); 
-  let sumaEnv=0, sumaLim=0, sumaNeed=0, sumaKwal=0;
-  envRows.forEach(r=>{
-    const kwal = kosztKwalifikowany(r);
-    const lim  = limitProgramowy(r, level, mode);
-    const need = reqCost(lim || (kwal*level.pct), level.pct);
-    const dot  = Math.min(kwal*level.pct, lim || (kwal*level.pct)); 
-    sumaEnv+=dot; sumaLim+=(lim||0); sumaNeed+=(need||0); sumaKwal+=kwal;
-    out.push([r.n, toNum(r.c), toNum(r.area), toNum(r.units), toNum(r.capM2), toNum(r.capUnit), r.le1||0,r.le2||0,r.le3||0,r.gt1||0,r.gt2||0,r.gt3||0, Math.round(lim||0), Math.round(need||0), Math.round(kwal), Math.round(dot)]);
-  });
-  out.push(['SUMA','','','','','','','','','','','', Math.round(sumaLim), Math.round(sumaNeed), Math.round(sumaKwal), Math.round(sumaEnv)]);
+  out.push(['Kalkulator główny']); out.push(['Zakres','Koszt [zł]','Limit PODST.','Limit PODWYŻSZ.','Limit NAJWYŻSZY','Dotacja [zł]','Min. koszt (limit/% )']); let sumaMain=0, sumLimitMain=0;
+  rows.forEach(r=>{ const koszt=toNum(r.c); const lim=limForLevel(r, level.name); const dot=Math.min(koszt*level.pct,lim); sumaMain+=dot; sumLimitMain+=lim; out.push([r.n,koszt,r.l1,r.l2,r.l3,Math.round(dot), level.pct>0?Math.ceil(lim/level.pct):'—']); });
+  out.push(['SUMA','','','','',Math.round(sumaMain), level.pct>0?Math.ceil(sumLimitMain/level.pct):'—']); out.push(['']);
+  out.push(['Ocieplenie i stolarka (tryb: '+(mode==='LE'?'EU ≤ 140':'EU > 140')+')']); out.push(['Pozycja','Koszt [zł]','LE: Limit Podst.','LE: Limit Podwyższ.','LE: Limit Najwyższy','GT: Limit Podst.','GT: Limit Podwyższ.','GT: Limit Najwyższy','Dotacja [zł]','Min. koszt (limit/% )']); let sumaEnv=0,sumLimitEnv=0;
+  envRows.forEach(r=>{ const koszt=toNum(r.c); const lim=currentLimitSet(r,level,mode); const dot=Math.min(koszt*level.pct,lim); sumaEnv+=dot; sumLimitEnv+=lim; out.push([r.n,koszt,r.le1,r.le2,r.le3,r.gt1,r.gt2,r.gt3,Math.round(dot), level.pct>0?Math.ceil(lim/level.pct):'—']); });
+  out.push(['SUMA','','','','','','','',Math.round(sumaEnv), level.pct>0?Math.ceil(sumLimitEnv/level.pct):'—']);
   downloadCSV('cp2025_laczny', out);
 }
 
-/* ========= Podsumowanie (kopiuj) ========= */
+/* ===== copy summary ===== */
 function copySummary(){
   const level=calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
-  let sumaMain=0; rows.forEach(r=>{
-    const koszt=toNum(r.c);
-    const lim=level.name==='PODSTAWOWY'?toNum(r.l1):level.name==='PODWYŻSZONY'?toNum(r.l2):level.name==='NAJWYŻSZY'?toNum(r.l3):0;
-    const dot=Math.min(koszt*level.pct,lim); sumaMain+=dot;
-  });
-  const mode=q('#euThreshold').value; let sumaEnv=0; envRows.forEach(r=>{
-    const kwal=kosztKwalifikowany(r), lim=limitProgramowy(r,level,mode); const dot=Math.min(kwal*level.pct, lim || (kwal*level.pct)); sumaEnv+=dot;
-  });
-  const txt = `Poziom: ${level.name} (${(level.pct*100||0)}%)
+  let sumaMain=0,sumLimitMain=0; rows.forEach(r=>{ const lim=limForLevel(r, level.name); sumLimitMain+=lim; const dot=Math.min(toNum(r.c)*level.pct,lim); sumaMain+=dot; });
+  const mode=q('#euThreshold').value; let sumaEnv=0,sumLimitEnv=0; envRows.forEach(r=>{ const lim=currentLimitSet(r,level,mode); sumLimitEnv+=lim; const dot=Math.min(toNum(r.c)*level.pct,lim); sumaEnv+=dot; });
+  const needMain = level.pct>0?Math.ceil(sumLimitMain/level.pct):0;
+  const needEnv  = level.pct>0?Math.ceil(sumLimitEnv/level.pct):0;
+
+  const txt =
+`Poziom: ${level.name} (${(level.pct*100||0)}%)
 Gospodarstwo: ${q('#typ').value||'-'}, osób: ${q('#osoby').value||'-'}
-Dochód/os (mies.): ${q('#doch_mies').value||'-'} | Dochód roczny: ${q('#doch_roczny').value||'-'} | Świadczenia: ${q('#swiadczenia').value||'-'}
+Dochód/os (mies.): ${q('#doch_mies').value||'-'}  |  Dochód roczny: ${q('#doch_roczny').value||'-'}  |  Świadczenia: ${q('#swiadczenia').value||'-'}
 
 Suma dotacji (główna): ${Math.round(sumaMain)} zł
 Suma dotacji (ocieplenie): ${Math.round(sumaEnv)} zł
 Razem: ${Math.round(sumaMain + sumaEnv)} zł
+
+Min. koszt by wykorzystać 100% limitów:
+- Główna: ${needMain?fmt(needMain)+' zł':'—'}
+- Ocieplenie: ${needEnv?fmt(needEnv)+' zł':'—'}
 `;
   navigator.clipboard.writeText(txt).then(()=>toast('Podsumowanie skopiowane.')).catch(()=>toast('Nie udało się skopiować.', true));
 }
 
-/* ========= Zdarzenia ========= */
+/* ===== events ===== */
 ['#typ','#osoby','#doch_mies','#doch_roczny','#swiadczenia'].forEach(sel => q(sel).addEventListener('input', ()=>{ renderMain(); renderEnv(); }));
 q('#btnAdd').addEventListener('click', ()=>addRow());
 q('#btnPreset').addEventListener('click', ()=>{ presetMain(); renderMain(); saveMain(false); });
-q('#presetBasic').addEventListener('click', ()=>applyPreset('PODSTAWOWY'));
-q('#presetMid').addEventListener('click',   ()=>applyPreset('PODWYŻSZONY'));
-q('#presetTop').addEventListener('click',   ()=>applyPreset('NAJWYŻSZY'));
 q('#btnSave').addEventListener('click', ()=>{ saveMain(true); saveEnv(true); });
 q('#btnLoad').addEventListener('click', ()=>{ loadMain(); loadEnv(); });
-q('#btnReset').addEventListener('click', ()=>{ resetMain(); resetEnv(); toast('Wyczyszczono.'); });
+q('#btnReset').addEventListener('click', ()=>{ resetMain(); resetEnv(); });
 q('#btnPrint').addEventListener('click', ()=>window.print());
 q('#euThreshold').addEventListener('change', ()=>{ renderEnv(); saveEnv(false); });
 q('#btnAddEnv').addEventListener('click', ()=>addEnvRow());
@@ -701,7 +528,7 @@ q('#btnExportEnvCSV').addEventListener('click', exportEnvCSV);
 q('#btnExportAllCSV').addEventListener('click', exportAllCSV);
 q('#btnCopySummary').addEventListener('click', copySummary);
 
-/* ========= init ========= */
+/* ===== init ===== */
 function init(){
   presetMain(); presetEnv();
   if (localStorage.getItem('cp2025_main')) loadMain(); else renderMain();
@@ -709,6 +536,5 @@ function init(){
 }
 init();
 </script>
-<script src="script.js"></script>
 </body>
 </html>
