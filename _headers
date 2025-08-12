@@ -1,13 +1,5 @@
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kalkulator dotacji – Czyste Powietrze 2025 • wersja SUPER</title>
-  <meta name="description" content="Kalkulator dotacji programu Czyste Powietrze 2025: poziomy, limity, zł/m² i zł/szt., presety, walidacja, CSV/JSON, druk/PDF.">
-  <meta name="robots" content="index, follow">
-  <meta name="author" content="Twoja nazwa lub firma">
-  <link rel="icon" href="/favicon.ico">
-  <!-- jeśli chcesz dodatkową ikonę dla iOS -->
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <!-- Kolor motywu w mobilnych przeglądarkach -->
-  <meta name="theme-color" content="#0b1020">
-</head>
+/*
+  Content-Security-Policy: default-src 'self' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https:; object-src 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer-when-downgrade
+  Cache-Control: no-store
