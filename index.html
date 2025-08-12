@@ -171,9 +171,9 @@
       <div class="pill">Procent: <b id="procent">—</b></div>
       <div class="pill">Źródło pakietu: <b id="catLabel">—</b></div>
       <div class="right">
-        <button id="btnProfileP" class="ghost" type="button">Profil: Podstawowy / EU140</button>
-        <button id="btnProfileM" class="ghost" type="button">Profil: Podwyższony / EUU140</button>
-        <button id="btnProfileT" class="ghost" type="button">Profil: Najwyższy / EUU140</button>
+        <button id="btnProfileP" class="ghost" type="button">Profil: Podstawowy / EU>140</button>
+        <button id="btnProfileM" class="ghost" type="button">Profil: Podwyższony / EU>140</button>
+        <button id="btnProfileT" class="ghost" type="button">Profil: Najwyższy / EU>140</button>
       </div>
     </div>
     <div id="warnTop" class="warn hidden">
@@ -640,7 +640,7 @@ q('#btnProfileT').addEventListener('click', ()=>{
 /* ===== agregacja ===== */
 function updateAggregates(){ renderTotals(); renderSummary(); }
 const debUpdateAggregates=debounce(updateAggregates,160);
-function recomputeAllRows(){ state.mainRows.forEach((i)=>recalcMainRow(i)); state.envRows.forEach((i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
+function recomputeAllRows(){ state.mainRows.forEach((,i)=>recalcMainRow(i)); state.envRows.forEach((,i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
 
 /* ===== auto / preset ===== */
 function autoNeedMain(){
@@ -679,7 +679,7 @@ function downloadCSV(name, rows){
   const csv = rows.map(r => r.map(csvEscape).join(';')).join('\n');
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = name.endsWith('.csv') ? name : `${name}.csv`; a.click(); URL.revokeObjectURL(a.href);
+  a.download = name.endsWith('.csv') ? name : ${name}.csv; a.click(); URL.revokeObjectURL(a.href);
 }
 function exportCSVMain(){
   const out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata']];
@@ -710,7 +710,7 @@ function exportCSVAll(){
   });
   state.envRows.forEach((r,i)=>{
     const base=DATA_ENV[i], cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
-    out.push(['Ocieplenie', base.name, `${r.m2||0} m2 x ${r.ownRate||0}`, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
+    out.push(['Ocieplenie', base.name, ${r.m2||0} m2 x ${r.ownRate||0}, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
   });
   out.push([]);
   out.push(['PODSUMOWANIE','','','', 'Limit pakietu', capProg||'—', 'Nadwyżka ponad limit', overCap]);
@@ -783,8 +783,8 @@ function composeOfferHTML({client=true}={}){
   const {mains,envs}=collectSelectedRows();
   const s=currentSummary();
   const rows=[];
-  mains.forEach(x=>{ if(x.sel) rows.push({name:`${x.comp.name} – ${x.comp.variants[x.vIdx].label}`, gross:x.gross, grant:x.grant, copay:x.copay}); });
-  envs.forEach(x=>{ if(x.sel) rows.push({name:`${x.name}`, gross:x.gross, grant:x.grant, copay:x.copay}); });
+  mains.forEach(x=>{ if(x.sel) rows.push({name:${x.comp.name} – ${x.comp.variants[x.vIdx].label}, gross:x.gross, grant:x.grant, copay:x.copay}); });
+  envs.forEach(x=>{ if(x.sel) rows.push({name:${x.name}, gross:x.gross, grant:x.grant, copay:x.copay}); });
 
   const title = client? 'Oferta dla klienta' : 'Raport pełny (sprzedawca)';
   const css = `
@@ -854,7 +854,7 @@ async function shareHtml(filename, html){
 
   const subject=encodeURIComponent('Oferta ARKON – Czyste Powietrze 2025');
   const body=encodeURIComponent('Dzień dobry,\n\nW załączeniu przesyłam ofertę (plik został pobrany na komputer). Proszę dołączyć pobrany plik do wiadomości.\n\nPozdrawiam,\nARKON');
-  window.location.href=`mailto:?subject=${subject}&body=${body}`;
+  window.location.href=mailto:?subject=${subject}&body=${body};
 }
 
 /* ===== DRUK przyciski ===== */
