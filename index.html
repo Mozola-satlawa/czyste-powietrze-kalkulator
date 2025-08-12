@@ -67,7 +67,7 @@
   /* tryb drukowania dla klienta */
   .print-client .admin-only,
   .print-client #warnTop,
-  .print-client .pill:has(#sumCapProg), /* ukryj limit pakietu dla klienta */
+  .print-client .pill:has(#sumCapProg),
   .print-client .pill:has(#sumOverCap),
   .print-client .chip,
   .print-client .subnote { display:none !important; }
@@ -327,7 +327,7 @@ const nowStr=()=>new Date().toLocaleString('pl-PL');
 let VAT=0.08;
 q('#vatSel').addEventListener('change', ()=>{ VAT=Number(q('#vatSel').value)||0.08; recomputeAllRows(); updateAggregates(); saveAll(); });
 
-/* ===== limity pakietowe (wg przekazanej tabeli) ===== */
+/* ===== limity pakietowe ===== */
 const PACK_CAPS={
   GRUNT:{ EU_BELOW_80:{P:34840,M:60970,T:null}, EU_80_140:{P:54040,M:94570,T:null}, EU_ABOVE_140:{P:68040,M:119070,T:170100} },
   PW_PLUS:{ EU_BELOW_80:{P:22920,M:40110,T:null}, EU_80_140:{P:42120,M:73710,T:null}, EU_ABOVE_140:{P:56120,M:98210,T:140300} },
@@ -344,18 +344,36 @@ const RATES_M2={
   bramy:{P:600,M:1050,T:1500}
 };
 
-/* ===== login (UI; nie jest zabezpieczeniem serwerowym) ===== */
+/* ===== login (UI; nie jest zabezpieczeniem serwerowym) — poprawiony ===== */
 (function(){
-  const okUser='Arkon', okPass='Arkon2025';
-  if (sessionStorage.getItem('arkon_ok')==='1'){ unlock(); return; }
-  q('#btnLogin').addEventListener('click', tryLogin);
-  q('#lgPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+  const okUser='arkon';       // akceptujemy różną wielkość liter
+  const okPass='arkon2025';
+
+  // Fallback storage
+  const Memory={flag:null};
+  const STORAGE={
+    get(k){ try{ return sessionStorage.getItem(k) || localStorage.getItem(k) || Memory.flag; }catch(_){ return Memory.flag; } },
+    set(k,v){ try{ sessionStorage.setItem(k,v); }catch(_){ } try{ localStorage.setItem(k,v); }catch(_){ } Memory.flag=v; }
+  };
+
+  const $=(s)=>document.querySelector(s);
+  const $login=$('#login'), $app=$('#app'), $user=$('#lgUser'), $pass=$('#lgPass'), $btn=$('#btnLogin'), $msg=$('#lgMsg');
+
+  if (STORAGE.get('arkon_ok')==='1'){ unlock(); return; }
+
   function tryLogin(){
-    const u=q('#lgUser').value.trim(), p=q('#lgPass').value;
-    if (u===okUser && p===okPass){ sessionStorage.setItem('arkon_ok','1'); unlock(); }
-    else q('#lgMsg').textContent='Błędna nazwa lub hasło.';
+    const u=String($user?.value||'').trim().toLowerCase();
+    const p=String($pass?.value||'').trim().toLowerCase();
+    if (u===okUser && p===okPass){ STORAGE.set('arkon_ok','1'); unlock(); }
+    else { $msg.textContent='Błędna nazwa lub hasło.'; }
   }
-  function unlock(){ q('#login').style.display='none'; const app=q('#app'); app.style.filter='none'; app.style.pointerEvents='auto'; }
+  function onKey(e){ if(e.key==='Enter'){ tryLogin(); } }
+
+  $btn?.addEventListener('click', tryLogin);
+  $user?.addEventListener('keydown', onKey);
+  $pass?.addEventListener('keydown', onKey);
+
+  function unlock(){ if($login) $login.style.display='none'; if($app){ $app.style.filter='none'; $app.style.pointerEvents='auto'; } }
 })();
 
 /* ===== progi → poziom (P/M/T) ===== */
@@ -388,7 +406,7 @@ qa('input[name="pm"]').forEach(r=>r.addEventListener('change', ()=>{
   state.priceMode=r.value; recomputeAllRows(); updateAggregates(); autosave();
 }));
 
-/* ===== dane GŁÓWNE (pojedyncze limity wg poziomu) ===== */
+/* ===== dane GŁÓWNE (pojedyncze limity) ===== */
 const DATA_MAIN=[
   {id:'PC',name:'Pompa ciepła',heat:true,variants:[
     {label:'powietrze/woda – standard',     lim:{P:12600,M:22000,T:31500}},
@@ -572,7 +590,7 @@ function detectPackCap(){
   const L=(lvl==='PODSTAWOWY'?'P':(lvl==='PODWYŻSZONY'?'M':(lvl==='NAJWYŻSZY'?'T':null)));
   if(!L) return {cap:null, nd:false, cat};
   const cap=PACK_CAPS[cat] && PACK_CAPS[cat][eu] ? PACK_CAPS[cat][eu][L] : null;
-  const nd = (cap==null); // niedostępne („nd*”)
+  const nd = (cap==null); // „nd*”
   return {cap, nd, cat, eu, L};
 }
 function toggleWarnIfNeeded(){
@@ -640,7 +658,7 @@ q('#btnProfileT').addEventListener('click', ()=>{
 /* ===== agregacja ===== */
 function updateAggregates(){ renderTotals(); renderSummary(); }
 const debUpdateAggregates=debounce(updateAggregates,160);
-function recomputeAllRows(){ state.mainRows.forEach((,i)=>recalcMainRow(i)); state.envRows.forEach((,i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
+function recomputeAllRows(){ state.mainRows.forEach((i)=>recalcMainRow(i)); state.envRows.forEach((i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
 
 /* ===== auto / preset ===== */
 function autoNeedMain(){
@@ -679,7 +697,7 @@ function downloadCSV(name, rows){
   const csv = rows.map(r => r.map(csvEscape).join(';')).join('\n');
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = name.endsWith('.csv') ? name : ${name}.csv; a.click(); URL.revokeObjectURL(a.href);
+  a.download = name.endsWith('.csv') ? name : `${name}.csv`; a.click(); URL.revokeObjectURL(a.href);
 }
 function exportCSVMain(){
   const out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata']];
@@ -710,7 +728,7 @@ function exportCSVAll(){
   });
   state.envRows.forEach((r,i)=>{
     const base=DATA_ENV[i], cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
-    out.push(['Ocieplenie', base.name, ${r.m2||0} m2 x ${r.ownRate||0}, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
+    out.push(['Ocieplenie', base.name, `${r.m2||0} m2 x ${r.ownRate||0}`, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
   });
   out.push([]);
   out.push(['PODSUMOWANIE','','','', 'Limit pakietu', capProg||'—', 'Nadwyżka ponad limit', overCap]);
@@ -725,12 +743,7 @@ function setPrintMode(mode){ // 'client' | 'seller-full' | 'seller-short' | 'sel
 }
 function doPrint(mode){
   setPrintMode(mode);
-  // Dla klienta – dodaj nagłówek z danymi firmy ponad wrap
-  if (mode==='client'){
-    ensureClientHeader();
-  } else {
-    removeClientHeader();
-  }
+  if (mode==='client'){ ensureClientHeader(); } else { removeClientHeader(); }
   window.print();
   setTimeout(()=>{ setPrintMode(null); }, 300);
 }
@@ -763,7 +776,6 @@ function removeClientHeader(){ if(clientHdr){ clientHdr.remove(); clientHdr=null
 /* ===== GENERATOR UPROSZCZONEGO I PEŁNEGO HTML (do wysyłki) ===== */
 function fmtPL(n){ return INT.format(Math.round(n||0)); }
 function collectSelectedRows(){
-  // Zbierz wybrane pozycje
   const mains=state.mainRows.map((r)=>({sel:r.sel, comp:DATA_MAIN[r.compIdx], vIdx:r.vIdx, net:r._costNet, grant:r._grant, gross:r._gross, copay:r._copay}));
   const envs=state.envRows.map((r,i)=>({sel:r.sel, name:DATA_ENV[i].name, net:r.costNet, grant:r._grant, gross:r._gross, copay:r._copay, m2:r.m2, own:r.ownRate}));
   return {mains, envs};
@@ -783,8 +795,8 @@ function composeOfferHTML({client=true}={}){
   const {mains,envs}=collectSelectedRows();
   const s=currentSummary();
   const rows=[];
-  mains.forEach(x=>{ if(x.sel) rows.push({name:${x.comp.name} – ${x.comp.variants[x.vIdx].label}, gross:x.gross, grant:x.grant, copay:x.copay}); });
-  envs.forEach(x=>{ if(x.sel) rows.push({name:${x.name}, gross:x.gross, grant:x.grant, copay:x.copay}); });
+  mains.forEach(x=>{ if(x.sel) rows.push({name:`${x.comp.name} – ${x.comp.variants[x.vIdx].label}`, gross:x.gross, grant:x.grant, copay:x.copay}); });
+  envs.forEach(x=>{ if(x.sel) rows.push({name:`${x.name}`, gross:x.gross, grant:x.grant, copay:x.copay}); });
 
   const title = client? 'Oferta dla klienta' : 'Raport pełny (sprzedawca)';
   const css = `
@@ -843,7 +855,7 @@ async function shareHtml(filename, html){
     try{
       await navigator.share({title: filename, text:'Oferta ARKON – Czyste Powietrze 2025', files:[file]});
       return;
-    }catch(e){ /* cancel */ }
+    }catch(e){ /* cancelled */ }
   }
   // Fallback: pobierz + otwórz mailto
   const a=document.createElement('a');
@@ -854,7 +866,7 @@ async function shareHtml(filename, html){
 
   const subject=encodeURIComponent('Oferta ARKON – Czyste Powietrze 2025');
   const body=encodeURIComponent('Dzień dobry,\n\nW załączeniu przesyłam ofertę (plik został pobrany na komputer). Proszę dołączyć pobrany plik do wiadomości.\n\nPozdrawiam,\nARKON');
-  window.location.href=mailto:?subject=${subject}&body=${body};
+  window.location.href=`mailto:?subject=${subject}&body=${body}`;
 }
 
 /* ===== DRUK przyciski ===== */
@@ -873,7 +885,7 @@ q('#btnSendFull').addEventListener('click', async()=>{
   await shareHtml('oferta_arkon_pelna.html', html);
 });
 
-/* ===== SAVE / LOAD / PRINT ===== */
+/* ===== SAVE / LOAD ===== */
 function saveAll(){
   const data={
     typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiad:q('#swiadczenia').value,
@@ -894,7 +906,7 @@ function loadAll(){
   state.priceMode = d.pm==='BRUTTO' ? 'BRUTTO' : 'NETTO';
   qa('input[name="pm"]').forEach(r=>{ r.checked=(r.value===state.priceMode); });
 
-  buildMain(); buildEnv(); // odbuduj tabele, potem wypełnij
+  buildMain(); buildEnv();
   d.main?.forEach((m,i)=>{ const r=state.mainRows[i]; if(!r) return; r.sel=!!m.sel; r.els.sel.checked=r.sel; r.vIdx=Number(m.vIdx||0); r.els.selVar.value=String(r.vIdx); r.costInput=toNum(m.cost); r.els.cost.value=r.costInput?String(r.costInput):''; recalcMainRow(i); });
   d.env?.forEach((e,i)=>{ const r=state.envRows[i]; if(!r) return; r.sel=!!e.sel; r.els.sel.checked=r.sel; r.m2=toNum(e.m2); r.els.m2.value=r.m2?String(r.m2):''; r.ownRate=toNum(e.ownRate); r.els.ownRate.value=r.ownRate?String(r.ownRate):''; recalcEnvRow(i); });
   refreshLevel();
