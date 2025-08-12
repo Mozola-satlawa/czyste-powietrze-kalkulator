@@ -1,13 +1,13 @@
-/*
-  Cache-Control: private, no-store, max-age=0, must-revalidate
-  Pragma: no-cache
-  Expires: 0
-  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: no-referrer
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'none'; form-action 'self'
-
-/favicon.ico
-  Content-Type: image/x-icon
-  Cache-Control: public, max-age=604800
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kalkulator dotacji – Czyste Powietrze 2025 • wersja SUPER</title>
+  <meta name="description" content="Kalkulator dotacji programu Czyste Powietrze 2025: poziomy, limity, zł/m² i zł/szt., presety, walidacja, CSV/JSON, druk/PDF.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Twoja nazwa lub firma">
+  <link rel="icon" href="/favicon.ico">
+  <!-- jeśli chcesz dodatkową ikonę dla iOS -->
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <!-- Kolor motywu w mobilnych przeglądarkach -->
+  <meta name="theme-color" content="#0b1020">
+</head>
