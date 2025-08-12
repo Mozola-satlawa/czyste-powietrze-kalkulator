@@ -4,24 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kalkulator Czyste Powietrze – ARKON</title>
-<meta name="description" content="Kalkulator dotacji Czyste Powietrze 2025: źródło ciepła, ocieplenie, stolarka, limity dotacji na m2, VAT 8%, zapis, CSV, druk.">
+<meta name="description" content="Kalkulator dotacji Czyste Powietrze 2025: pompa ciepła, ocieplenie, rekuperacja. Limity pojedyncze i pakietowe, VAT 8/23%, CSV, druk klient/sprzedawca, wysyłka e‑mailem.">
 <style>
-  :root{ --bg:#0b1020; --p1:#121a34; --p2:#172142; --ink:#e8edff; --muted:#aeb8da; --accent:#4cc9f0; --ok:#2b8a57; --grid:#243059; }
+  :root{
+    --bg:#0b1020; --p1:#121a34; --p2:#172142; --ink:#e8edff; --muted:#aeb8da;
+    --accent:#4cc9f0; --ok:#2b8a57; --warn:#e6a700; --grid:#243059; --danger:#ff6b6b;
+  }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{ margin:0;background:linear-gradient(180deg,#0a0f1e,#0c1230 60%,#0a0f1e); color:var(--ink); font:16px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif; }
-  .wrap{max-width:1200px;margin:auto;padding:24px 16px 90px}
+  body{margin:0;background:linear-gradient(180deg,#0a0f1e,#0c1230 60%,#0a0f1e);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1200px;margin:auto;padding:24px 16px 130px}
   header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
-  .logo{width:54px;height:54px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1f2a55;color:var(--accent);font:800 15px/1 system-ui}
+  .logo{width:54px;height:54px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1f2a55;color:var(--accent)}
+  .logo svg{width:42px;height:42px}
   h1{font-size:22px;margin:0}
   .muted{color:var(--muted);font-size:13px}
   .panel{background:linear-gradient(180deg,var(--p1),var(--p2));border:1px solid #1c2750;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 10px 30px #0006}
   .grid{display:grid;gap:12px}
-  @media(min-width:960px){.cols-3{grid-template-columns:1fr 1fr 1fr}.cols-2{grid-template-columns:1fr 1fr}}
+  @media(min-width:960px){.cols-3{grid-template-columns:repeat(3,1fr)}.cols-2{grid-template-columns:repeat(2,1fr)}}
   label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-  input,select,button{font:500 15px/1.2 system-ui,Segoe UI,Roboto,Arial;color:var(--ink)}
-  input,select{width:100%;background:#0d1530;border:1px solid #28356c;border-radius:10px;padding:10px;outline:none}
-  input:focus,select:focus{border-color:#3b4fa0;box-shadow:0 0 0 3px #3b4fa033}
+  input,select,button,textarea{font:500 15px/1.2 system-ui,Segoe UI,Roboto,Arial;color:var(--ink)}
+  input,select,textarea{width:100%;background:#0d1530;border:1px solid #28356c;border-radius:10px;padding:10px;outline:none}
+  textarea{min-height:70px;resize:vertical}
+  input:focus,select:focus,textarea:focus{border-color:#3b4fa0;box-shadow:0 0 0 3px #3b4fa033}
   input.num{text-align:right}
   button{background:#233261;border:1px solid #3a4ca3;color:#fff;border-radius:12px;padding:10px 12px;cursor:pointer}
   button.ghost{background:transparent;border:1px dashed #3a4ca3}
@@ -32,19 +37,47 @@
   .pill{display:inline-block;background:#0d1530;border:1px dashed #2b3a77;border-radius:999px;padding:8px 10px;margin:4px 8px 0 0;font-size:13px;color:var(--muted)}
   .right{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .hidden{display:none}
+  .warn{display:block;background:#2a2100;border:1px solid #6a5400;color:#ffefb0;border-radius:10px;padding:10px;margin-top:10px}
   table{width:100%;border-collapse:separate;border-spacing:0}
   th,td{padding:10px;border-bottom:1px solid var(--grid);text-align:left;vertical-align:middle}
   th.num,td.num{text-align:right}
-  [aria-live="polite"]{outline:none}
   .cap-badge{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid #ff7b7b;border-radius:999px;font-size:11px;color:#ffdada;background:#3a0e14}
-  .dim{opacity:.6}
+  .cap-prog{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid #ffd27b;border-radius:999px;font-size:11px;color:#fff2d2;background:#5a3a0e}
+  .over-panel{box-shadow:0 0 0 2px #ff7b7b55 inset}
+  .chip{display:inline-block;padding:6px 10px;border:1px solid #3750a8;border-radius:999px;background:#17224b;color:#bcd1ff;font-size:12px}
+  .chip.warn{border-color:#8a6e00;background:#302400;color:#ffe9a8}
+  .chip.danger{border-color:#9c2b2b;background:#2b1212;color:#ffd6d6}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px}
+  .subnote{font-size:12px;color:#9fb2ff;margin-top:6px}
+  @media(max-width:860px){
+    .wrap{padding-bottom:160px}
+    .hide-sm{display:none}
+    th:nth-child(4),td:nth-child(4), /* Limit (aktywny) */
+    th:nth-child(5),td:nth-child(5), /* Min. wydatek */
+    th:nth-child(7),td:nth-child(7)  /* Koszt brutto */ {display:none}
+  }
   @media print{
     body{background:#fff;color:#000}
-    .tabs,.right button,.tab-btn,.login-overlay{display:none!important}
+    .tabs,.tab-btn,.login-overlay,.toolbar button,.right button{display:none!important}
     .panel{box-shadow:none;border:1px solid #bbb;background:#fff}
     .logo{border:0;box-shadow:none}
-    .cap-badge{border-color:#000;color:#000}
+    .cap-badge,.cap-prog{border-color:#000;color:#000}
   }
+
+  /* tryb drukowania dla klienta */
+  .print-client .admin-only,
+  .print-client #warnTop,
+  .print-client .pill:has(#sumCapProg), /* ukryj limit pakietu dla klienta */
+  .print-client .pill:has(#sumOverCap),
+  .print-client .chip,
+  .print-client .subnote { display:none !important; }
+  .client-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .client-header .logo{width:64px;height:64px}
+  .client-meta{font-size:12px;color:#333}
+  .client-title{font-weight:800;margin:4px 0}
+  .signs{display:flex;gap:40px;margin-top:28px}
+  .sign{flex:1;border-top:1px solid #999;padding-top:6px;text-align:center;font-size:12px}
+
   /* login */
   .login-overlay{position:fixed;inset:0;background:radial-gradient(120% 120% at 20% 20%,#0c1230,#080c1e);display:grid;place-items:center;z-index:9999}
   .login-box{width:min(520px,92vw);background:#10183a;border:1px solid #263166;border-radius:14px;padding:22px;box-shadow:0 16px 48px #000b}
@@ -54,11 +87,13 @@
 </style>
 </head>
 <body>
-<!-- LOGIN -->
+<!-- LOGIN (UI; nie jest zabezpieczeniem serwerowym) -->
 <div id="login" class="login-overlay" aria-modal="true" role="dialog" aria-labelledby="loginTitle">
   <div class="login-box">
     <div class="login-title">
-      <div class="logo" aria-hidden="true">ARKON</div>
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="18" fill="#0e1538"/><path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text></svg>
+      </div>
       <div>
         <div id="loginTitle" style="font-weight:800">Panel dostępu • Arkon</div>
         <div class="muted">Wpisz nazwę i hasło, aby otworzyć kalkulator.</div>
@@ -83,21 +118,23 @@
 
 <div class="wrap" id="app" style="filter:blur(4px);pointer-events:none">
   <header>
-    <div class="logo" aria-hidden="true">ARKON</div>
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="18" fill="#0e1538"/><path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text></svg>
+    </div>
     <div>
       <h1>Kalkulator dotacji • Czyste Powietrze 2025</h1>
-      <div class="muted">Źródło ciepła + ocieplenie/stolarka. Jedno źródło ciepła, limity m2, VAT 8%, zapis/CSV/druk.</div>
+      <div class="muted">Źródło ciepła + ocieplenie/stolarka. Limity pojedyncze i <b>pakietowe</b>, VAT 8/23%, zapis/CSV/druk, wysyłka oferty.</div>
     </div>
   </header>
 
-  <div class="tabs" role="tablist" aria-label="Zakładki kalkulatora">
+  <div class="tabs admin-only" role="tablist" aria-label="Zakładki kalkulatora">
     <button class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-main" id="tabbtn-main" type="button">Główne (Źródło ciepła)</button>
     <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-env" id="tabbtn-env" type="button">Ocieplenie / Stolarka</button>
   </div>
 
-  <!-- METRYCZKA -->
-  <section class="panel" aria-labelledby="metryczkaTitle">
-    <h2 id="metryczkaTitle" class="muted" style="margin:0 0 8px 0">Metryczka</h2>
+  <!-- METRYCZKA / USTAWIENIA -->
+  <section class="panel admin-only" aria-labelledby="metryczkaTitle">
+    <h2 id="metryczkaTitle" class="muted" style="margin:0 0 8px 0">Metryczka i ustawienia</h2>
     <div class="grid cols-3">
       <div>
         <label for="typ">Typ gospodarstwa</label>
@@ -116,32 +153,78 @@
         <select id="swiadczenia"><option value="">— wybierz —</option><option>TAK</option><option>NIE</option></select>
       </div>
       <div>
-        <span class="muted" style="display:block;margin-bottom:6px">Tryb cen, które wpisuję</span>
-        <div class="pill" role="radiogroup" aria-label="Tryb cen">
-          <label><input type="radio" name="pm" value="NETTO" checked> NETTO</label>
-          <label style="margin-left:10px"><input type="radio" name="pm" value="BRUTTO"> BRUTTO (VAT 8%)</label>
-        </div>
+        <label for="euDemand">Zapotrzebowanie EU do ogrzewania (kWh/m²·rok)</label>
+        <select id="euDemand">
+          <option value="EU_BELOW_80">Poniżej 80</option>
+          <option value="EU_80_140">80–140</option>
+          <option value="EU_ABOVE_140">Powyżej 140</option>
+        </select>
+      </div>
+      <div>
+        <label for="vatSel">VAT dla obliczeń brutto</label>
+        <select id="vatSel">
+          <option value="0.08" selected>8% (budownictwo mieszkaniowe)</option>
+          <option value="0.23">23% (inne)</option>
+        </select>
       </div>
       <div class="pill">Poziom: <b id="poziom">—</b></div>
       <div class="pill">Procent: <b id="procent">—</b></div>
+      <div class="pill">Źródło pakietu: <b id="catLabel">—</b></div>
+      <div class="right">
+        <button id="btnProfileP" class="ghost" type="button">Profil: Podstawowy / EU140</button>
+        <button id="btnProfileM" class="ghost" type="button">Profil: Podwyższony / EUU140</button>
+        <button id="btnProfileT" class="ghost" type="button">Profil: Najwyższy / EUU140</button>
+      </div>
+    </div>
+    <div id="warnTop" class="warn hidden">
+      Najwyższy poziom (100%) dla <b>PW+ / GRUNT</b> dostępny jest tylko dla EU <b>&gt; 140 kWh/m²·rok</b>. W innych przypadkach dotacja pakietowa T jest niedostępna (stosowane są wyłącznie limity pojedyncze).
     </div>
   </section>
 
   <!-- PODSUMOWANIE -->
-  <section class="panel" aria-labelledby="sumTitle">
+  <section id="sumPanel" class="panel" aria-labelledby="sumTitle">
     <h2 id="sumTitle" class="muted" style="margin:0 0 8px 0">Podsumowanie</h2>
     <div aria-live="polite">
       <span class="pill">Wybrane (źródło): <b id="selCountMain">0</b></span>
       <span class="pill">Wybrane (ocieplenie): <b id="selCountEnv">0</b></span>
-      <span class="pill">Suma dotacji: <b id="sumGrantAll">0</b> zł</span>
-      <span class="pill">Min. wymagany wydatek (netto): <b id="sumNeedAll">—</b> zł</span>
+      <span class="pill admin-only">Suma dotacji (bez limitu): <b id="sumGrantAll">0</b> zł</span>
+      <span class="pill admin-only">Limit pakietu: <b id="sumCapProg">—</b> zł <span id="capBadge" class="cap-prog hidden">LIMIT (pakiet)</span></span>
+      <span class="pill admin-only">Dotacja po limicie: <b id="sumGrantCapped">0</b> zł</span>
+      <span class="pill admin-only">Nadwyżka ponad limit: <b id="sumOverCap">0</b> zł</span>
       <span class="pill">Suma dopłaty (brutto): <b id="sumCopayAll">0</b> zł</span>
+      <span class="pill">Min. wymagany wydatek (netto): <b id="sumNeedAll">—</b> zł</span>
     </div>
-    <div class="right" style="margin-top:10px">
-      <button id="btnSave" class="ghost" type="button">Zapisz</button>
-      <button id="btnLoad" class="ghost" type="button">Wczytaj</button>
-      <button id="btnPrint" class="ghost" type="button">Drukuj</button>
-      <button id="btnCSVAll" class="ghost" type="button">CSV (łączny)</button>
+
+    <div style="margin-top:8px">
+      <span id="noteOver" class="chip danger hidden admin-only">Uwaga: wykryto nadwyżkę ponad limit pakietu – powiększa dopłatę klienta.</span>
+      <span id="noteNoPack" class="chip warn hidden admin-only">Brak limitu pakietowego dla wybranej kombinacji (działają tylko limity pojedyncze).</span>
+    </div>
+
+    <div class="toolbar">
+      <button id="btnSave" class="ghost admin-only" type="button">Zapisz</button>
+      <button id="btnLoad" class="ghost admin-only" type="button">Wczytaj</button>
+      <button id="btnCSVAll" class="ghost admin-only" type="button">CSV (łączny)</button>
+
+      <button id="btnAutoNeedMain" class="ghost admin-only" type="button">Auto: 100% limitu (główne)</button>
+      <button id="btnAutoNeedEnv" class="ghost admin-only" type="button">Auto: 100% stawki (ocieplenie)</button>
+      <button id="btnPresetAll" class="ghost admin-only" type="button">Wyczyść wybory</button>
+
+      <!-- Druk -->
+      <button id="btnPrintClient" class="ok" type="button">🖨 Drukuj dla klienta</button>
+      <button id="btnPrintSellerFull" class="ghost admin-only" type="button">🖨 Druk – sprzedawca (szczegółowy)</button>
+      <button id="btnPrintSellerShort" class="ghost admin-only" type="button">🖨 Druk – sprzedawca (skrócony)</button>
+      <button id="btnPrintSellerTech" class="ghost admin-only" type="button">🖨 Druk – sprzedawca (techniczny)</button>
+
+      <!-- Wysyłka -->
+      <button id="btnSendClient" class="ghost" type="button">✉ Wyślij e‑mailem (klient)</button>
+      <button id="btnSendFull" class="ghost admin-only" type="button">✉ Wyślij e‑mailem (pełny)</button>
+    </div>
+
+    <div class="subnote admin-only">Wysyłka: na telefonach (Chrome/Android) plik udostępni się bezpośrednio; na desktopie zostanie pobrany i otworzy się okno poczty (należy dołączyć plik ręcznie).</div>
+
+    <div class="admin-only" style="margin-top:10px">
+      <label for="notes">Notatki sprzedawcy (zapisują się lokalnie razem ze stanem)</label>
+      <textarea id="notes" placeholder="np. nazwisko klienta, telefon, adres inwestycji, uwagi…"></textarea>
     </div>
   </section>
 
@@ -149,33 +232,32 @@
   <section id="tab-main" role="tabpanel" aria-labelledby="tabbtn-main">
     <section class="panel">
       <div class="muted" style="margin-bottom:8px">
-        Dotacja = min(koszt NETTO × % , limit dla aktywnego poziomu). Dopuszczalne tylko jedno źródło ciepła – wybranie innego odznacza poprzednie.
+        Dotacja = <i>min(koszt NETTO × % , limit dla poziomu)</i>. Dopuszczalne tylko <b>jedno źródło ciepła</b>.
       </div>
-      <div class="right" style="margin-bottom:6px">
-        <button id="btnPresetMain" class="ghost" type="button">Przywróć domyślne</button>
-        <button id="btnAutoNeedMain" class="ghost" type="button">Auto: 100% limitu</button>
+      <div class="right admin-only" style="margin-bottom:6px">
+        <button id="btnPresetMain" class="ghost" type="button">Przywróć domyślne (główne)</button>
         <button id="btnCSVMain" class="ghost" type="button">CSV (główne)</button>
       </div>
       <div style="overflow:auto">
         <table>
           <thead>
             <tr>
-              <th scope="col">Wybierz</th>
-              <th scope="col">Komponent / Wariant</th>
-              <th scope="col" class="num">Koszt (Twoja kwota)</th>
-              <th scope="col" class="num">Limit (aktywny)</th>
-              <th scope="col" class="num">Min. wydatek (netto)</th>
-              <th scope="col" class="num">Dotacja</th>
-              <th scope="col" class="num">Koszt brutto</th>
-              <th scope="col" class="num">Dopłata (brutto)</th>
+              <th>Wybierz</th>
+              <th>Komponent / Wariant</th>
+              <th class="num">Koszt (Twoja kwota)</th>
+              <th class="num hide-sm admin-only">Limit (aktywny)</th>
+              <th class="num hide-sm admin-only">Min. wydatek (netto)</th>
+              <th class="num">Dotacja</th>
+              <th class="num hide-sm admin-only">Koszt brutto</th>
+              <th class="num">Dopłata (brutto)</th>
             </tr>
           </thead>
           <tbody id="tbodyMain"></tbody>
           <tfoot>
             <tr>
-              <td colspan="5" class="num"><b>SUMA (główne)</b></td>
+              <td colspan="5" class="num hide-sm admin-only"><b>SUMA (główne)</b></td>
               <td class="num" id="sumMain">0</td>
-              <td class="num" id="sumMainGross">0</td>
+              <td class="num hide-sm admin-only" id="sumMainGross">0</td>
               <td class="num" id="sumMainCopay">0</td>
             </tr>
           </tfoot>
@@ -187,36 +269,35 @@
   <!-- OCIEPLENIE / STOLARKA -->
   <section id="tab-env" class="hidden" role="tabpanel" aria-labelledby="tabbtn-env">
     <section class="panel">
-      <div class="muted">Dotacja = min( koszt NETTO × % , pow_m2 × stawka_dotacji_netto_na_m2 ). Ceny brutto liczone z VAT 8%.</div>
+      <div class="muted">Dotacja = <i>min( koszt NETTO × % , pow_m2 × stawka_dotacji_NETTO_na_m2 )</i>. Ceny brutto liczone z wybranego VAT.</div>
     </section>
     <section class="panel">
-      <div class="right" style="margin-bottom:6px">
-        <button id="btnPresetEnv" class="ghost" type="button">Przywróć domyślne</button>
-        <button id="btnAutoNeedEnv" class="ghost" type="button">Auto: 100% stawki</button>
+      <div class="right admin-only" style="margin-bottom:6px">
+        <button id="btnPresetEnv" class="ghost" type="button">Przywróć domyślne (ocieplenie)</button>
         <button id="btnCSVEnv" class="ghost" type="button">CSV (ocieplenie)</button>
       </div>
       <div style="overflow:auto">
         <table>
           <thead>
             <tr>
-              <th scope="col">Wybierz</th>
-              <th scope="col">Pozycja</th>
-              <th scope="col" class="num">Pow. [m2]</th>
-              <th scope="col" class="num">Twoja cena / m2 (NETTO/BRUTTO)</th>
-              <th scope="col" class="num">Maks. dotacja / m2 (NETTO)</th>
-              <th scope="col" class="num">Koszt NETTO</th>
-              <th scope="col" class="num">Limit z m2</th>
-              <th scope="col" class="num">Dotacja</th>
-              <th scope="col" class="num">Koszt BRUTTO</th>
-              <th scope="col" class="num">Dopłata (brutto)</th>
+              <th>Wybierz</th>
+              <th>Pozycja</th>
+              <th class="num">Pow. [m²]</th>
+              <th class="num">Twoja cena / m² (NETTO/BRUTTO)</th>
+              <th class="num admin-only">Maks. dotacja / m² (NETTO)</th>
+              <th class="num">Koszt NETTO</th>
+              <th class="num admin-only">Limit z m²</th>
+              <th class="num">Dotacja</th>
+              <th class="num hide-sm admin-only">Koszt BRUTTO</th>
+              <th class="num">Dopłata (brutto)</th>
             </tr>
           </thead>
           <tbody id="tbodyEnv"></tbody>
           <tfoot>
             <tr>
-              <td colspan="7" class="num"><b>SUMA (ocieplenie/stolarka)</b></td>
+              <td colspan="7" class="num hide-sm admin-only"><b>SUMA (ocieplenie/stolarka)</b></td>
               <td class="num" id="sumEnvGrant">0</td>
-              <td class="num" id="sumEnvGross">0</td>
+              <td class="num hide-sm admin-only" id="sumEnvGross">0</td>
               <td class="num" id="sumEnvCopay">0</td>
             </tr>
           </tfoot>
@@ -230,181 +311,115 @@
 'use strict';
 
 /* ===== helpers ===== */
-function q(s){ return document.querySelector(s); }
-function qa(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); }
-var INT = new Intl.NumberFormat('pl-PL',{maximumFractionDigits:0});
-function fmt(n){ return isFinite(n) ? INT.format(Math.round(n)) : '—'; }
-function toNum(v){
-  if (typeof v !== 'string') return Number(v) || 0;
-  var s = v.replace(/\u00A0/g,' ').replace(/\s+/g,'').replace(/\./g,'').replace(',', '.');
-  var n = parseFloat(s); return isFinite(n) ? n : 0;
-}
-function debounce(fn,ms){ var t; ms=ms||180; return function(){ var a=arguments; clearTimeout(t); t=setTimeout(function(){ fn.apply(null,a); },ms); }; }
-var VAT = 0.08;
-function todayStr(){ return new Date().toISOString().slice(0,10); }
+const q =(s)=>document.querySelector(s);
+const qa=(s)=>Array.from(document.querySelectorAll(s));
+const INT=new Intl.NumberFormat('pl-PL',{maximumFractionDigits:0});
+const fmt=(n)=> (isFinite(n)? INT.format(Math.round(n)) : '—');
+const toNum=(v)=>{
+  if (typeof v!=='string') return Number(v)||0;
+  let s=v.replace(/\u00A0/g,' ').replace(/\s+/g,'').replace(/\./g,'').replace(',', '.');
+  const n=parseFloat(s); return isFinite(n)? n : 0;
+};
+const debounce=(fn,ms=180)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
+const nowStr=()=>new Date().toLocaleString('pl-PL');
 
-/* Główna formuła: limit + VAT + dopłata */
-function calcGrant(net, pct, limit){
-  var pctGrant = net * (pct || 0);
-  var cap = limit || 0;
-  var grant = Math.min(pctGrant, cap);
-  var gross = net * (1 + VAT);
-  var copay = Math.max(0, gross - grant);
-  var hit = pctGrant > cap + 1e-9; // czy zadziałał limit (grant obcięty)
-  return {grant:grant, gross:gross, copay:copay, hit:hit};
-}
+/* ===== VAT (globalny) ===== */
+let VAT=0.08;
+q('#vatSel').addEventListener('change', ()=>{ VAT=Number(q('#vatSel').value)||0.08; recomputeAllRows(); updateAggregates(); saveAll(); });
 
-/* ===== login (UI tylko; nie jest to zabezpieczenie) ===== */
+/* ===== limity pakietowe (wg przekazanej tabeli) ===== */
+const PACK_CAPS={
+  GRUNT:{ EU_BELOW_80:{P:34840,M:60970,T:null}, EU_80_140:{P:54040,M:94570,T:null}, EU_ABOVE_140:{P:68040,M:119070,T:170100} },
+  PW_PLUS:{ EU_BELOW_80:{P:22920,M:40110,T:null}, EU_80_140:{P:42120,M:73710,T:null}, EU_ABOVE_140:{P:56120,M:98210,T:140300} },
+  BIOMASS:{ EU_BELOW_80:{P:17040,M:29820,T:null}, EU_80_140:{P:36240,M:63420,T:null}, EU_ABOVE_140:{P:50240,M:87920,T:125600} }
+};
+
+/* ===== stawki/m2 (NETTO) ===== */
+const RATES_M2={
+  sciany:{P:180,M:210,T:250},
+  strop:{P:80,M:140,T:200},
+  podloga:{P:80,M:100,T:150},
+  okna:{P:650,M:1050,T:1500},
+  drzwi:{P:2000,M:2500,T:3000},
+  bramy:{P:600,M:1050,T:1500}
+};
+
+/* ===== login (UI; nie jest zabezpieczeniem serwerowym) ===== */
 (function(){
-  var okUser='Arkon', okPass='Arkon2025';
+  const okUser='Arkon', okPass='Arkon2025';
   if (sessionStorage.getItem('arkon_ok')==='1'){ unlock(); return; }
   q('#btnLogin').addEventListener('click', tryLogin);
-  q('#lgPass').addEventListener('keydown', function(e){ if(e.key==='Enter') tryLogin(); });
+  q('#lgPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
   function tryLogin(){
-    var u=q('#lgUser').value.trim(), p=q('#lgPass').value;
+    const u=q('#lgUser').value.trim(), p=q('#lgPass').value;
     if (u===okUser && p===okPass){ sessionStorage.setItem('arkon_ok','1'); unlock(); }
     else q('#lgMsg').textContent='Błędna nazwa lub hasło.';
   }
-  function unlock(){ q('#login').style.display='none'; var app=q('#app'); app.style.filter='none'; app.style.pointerEvents='auto'; }
+  function unlock(){ q('#login').style.display='none'; const app=q('#app'); app.style.filter='none'; app.style.pointerEvents='auto'; }
 })();
 
-/* ===== level / state ===== */
-var state = { level:{name:'BRAK', pct:0}, priceMode:'NETTO', mainRows:[], envRows:[] };
+/* ===== progi → poziom (P/M/T) ===== */
+const state={ level:{name:'BRAK', pct:0}, priceMode:'NETTO', mainRows:[], envRows:[] };
 
-function calcLevel(o){
-  var t=(o.typ||'').toUpperCase();
-  var ben=(o.swiadczenia||'').toUpperCase()==='TAK';
-  var m=toNum(o.mies), r=toNum(o.roczny);
+function calcLevel({typ,mies,roczny,swiadczenia}){
+  const t=(typ||'').toUpperCase();
+  const ben=(swiadczenia||'').toUpperCase()==='TAK';
+  const m=toNum(mies), r=toNum(roczny);
   if (ben || (t==='JEDNO' && m>0 && m<=1800) || (t==='WIELO' && m>0 && m<=1300)) return {name:'NAJWYŻSZY', pct:1};
   if ((t==='JEDNO' && m>0 && m<=3150) || (t==='WIELO' && m>0 && m<=2250)) return {name:'PODWYŻSZONY', pct:0.7};
   if (r>0 && r<=135000) return {name:'PODSTAWOWY', pct:0.4};
   return {name:'BRAK', pct:0};
 }
 function refreshLevel(){
-  state.level = calcLevel({ typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value });
+  state.level = calcLevel({
+    typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiadczenia:q('#swiadczenia').value
+  });
   q('#poziom').textContent=state.level.name;
-  q('#procent').textContent=state.level.pct? String((state.level.pct*100).toFixed(0))+'%' : '—';
-  recomputeAllRows();
-  updateAggregates();
-  autosave();
+  q('#procent').textContent=state.level.pct? (state.level.pct*100).toFixed(0)+'%' : '—';
+  toggleWarnIfNeeded();
+  recomputeAllRows(); updateAggregates(); autosave();
 }
-var debRefreshLevel = debounce(refreshLevel, 180);
-['#typ','#doch_mies','#doch_roczny','#swiadczenia'].forEach(function(sel){
+const debRefreshLevel=debounce(refreshLevel,180);
+['#typ','#doch_mies','#doch_roczny','#swiadczenia','#euDemand'].forEach(sel=>{
   q(sel).addEventListener('input', debRefreshLevel);
   q(sel).addEventListener('change', refreshLevel);
 });
-qa('input[name="pm"]').forEach(function(r){
-  r.addEventListener('change', function(){
-    state.priceMode=r.value;
-    recomputeAllRows();
-    updateAggregates();
-    autosave();
-  });
-});
+qa('input[name="pm"]').forEach(r=>r.addEventListener('change', ()=>{
+  state.priceMode=r.value; recomputeAllRows(); updateAggregates(); autosave();
+}));
 
-/* ===== dane GŁÓWNE ===== */
-var DATA_MAIN = [
-  {id:'PC',  name:'Pompa ciepła', heat:true, variants:[
+/* ===== dane GŁÓWNE (pojedyncze limity wg poziomu) ===== */
+const DATA_MAIN=[
+  {id:'PC',name:'Pompa ciepła',heat:true,variants:[
     {label:'powietrze/woda – standard',     lim:{P:12600,M:22000,T:31500}},
     {label:'powietrze/woda – wyższa klasa', lim:{P:14080,M:24640,T:35200}},
-    {label:'powietrze/powietrze',           lim:{P: 4480,M: 7840,T:11200}},
+    {label:'powietrze/powietrze (klimatyzacja)', lim:{P:4480,M:7840,T:11200}},
     {label:'gruntowa – wyższa klasa',       lim:{P:18000,M:31500,T:45000}},
-    {label:'dolne źródło (odwierty)',       lim:{P: 8200,M:14350,T:20500}}
+    {label:'dolne źródło (odwierty)',       lim:{P:8000,M:14000,T:20000}}
   ]},
-  {id:'SIEC',name:'Podłączenie do sieci ciepłowniczej (z przyłączem)', heat:true, variants:[
-    {label:'standard', lim:{P:9800,M:15575,T:22250}}
-  ]},
-  {id:'GAZ', name:'Kocioł zgazowujący drewno (podw. standard)', heat:true, variants:[
-    {label:'standard', lim:{P:8200,M:14350,T:20500}}
-  ]},
-  {id:'PEL', name:'Kocioł na pellet (podw. standard)', heat:true, variants:[
-    {label:'standard', lim:{P:8200,M:14350,T:20500}}
-  ]},
-  {id:'ELE', name:'Ogrzewanie elektryczne', heat:true, variants:[
-    {label:'standard', lim:{P:4480,M:7840,T:11200}}
-  ]},
-  {id:'INST',name:'Instalacja CO + CWU', heat:false, variants:[
-    {label:'standard', lim:{P:8200,M:14350,T:20500}}
-  ]},
-  {id:'AUD', name:'Audyt energetyczny', heat:false, variants:[{label:'standard', lim:{P:480,M:840,T:1200}}]},
-  {id:'SCH', name:'Świadectwo charakterystyki', heat:false, variants:[{label:'standard', lim:{P:160,M:280,T:400}}]},
-  {id:'REC', name:'Rekuperacja (zestaw)', heat:false, variants:[{label:'zestaw', lim:{P:6800,M:11690,T:16700}}]}
+  {id:'SIEC',name:'Podłączenie do sieci ciepłowniczej (z przyłączem)',heat:true,variants:[{label:'standard', lim:{P:9800,M:15575,T:22250}}]},
+  {id:'GAZ',name:'Kocioł zgazowujący drewno (podw. standard)',heat:true,variants:[{label:'standard', lim:{P:8200,M:14350,T:20500}}]},
+  {id:'PEL',name:'Kocioł na pellet (podw. standard)',heat:true,variants:[{label:'standard', lim:{P:8200,M:14350,T:20500}}]},
+  {id:'ELE',name:'Ogrzewanie elektryczne',heat:true,variants:[{label:'standard', lim:{P:4480,M:7840,T:11200}}]},
+  {id:'INST',name:'Instalacja CO + CWU',heat:false,variants:[{label:'standard', lim:{P:8200,M:14350,T:20500}}]},
+  {id:'AUD',name:'Audyt energetyczny',heat:false,variants:[{label:'standard', lim:{P:480,M:840,T:1200}}]},
+  {id:'SCH',name:'Świadectwo charakterystyki',heat:false,variants:[{label:'standard', lim:{P:160,M:280,T:400}}]},
+  {id:'REC',name:'Rekuperacja (zestaw)',heat:false,variants:[{label:'zestaw', lim:{P:6680,M:11690,T:16700}}]}
 ];
 function limActive(lim){
-  if (state.level.name==='PODSTAWOWY') return lim.P || 0;
-  if (state.level.name==='PODWYŻSZONY') return lim.M || 0;
-  if (state.level.name==='NAJWYŻSZY')   return lim.T || 0;
+  if (state.level.name==='PODSTAWOWY') return lim.P||0;
+  if (state.level.name==='PODWYŻSZONY') return lim.M||0;
+  if (state.level.name==='NAJWYŻSZY') return lim.T||0;
   return 0;
 }
-function buildMain(){
-  var tb=q('#tbodyMain'); tb.innerHTML=''; state.mainRows=[];
-  DATA_MAIN.forEach(function(comp, idx){
-    var tr=document.createElement('tr');
-    var row={compIdx:idx, heat:comp.heat, sel:false, vIdx:0, costInput:0, _costNet:0,_grant:0,_gross:0,_copay:0,_need:0, els:{}};
-
-    var tdSel=document.createElement('td'); var sel=document.createElement('input'); sel.type='checkbox'; sel.setAttribute('aria-label','Wybierz wiersz'); tdSel.appendChild(sel);
-    var tdName=document.createElement('td');
-    var title=document.createElement('div'); title.textContent=comp.name;
-    var selVar=document.createElement('select'); selVar.setAttribute('aria-label','Wariant');
-    comp.variants.forEach(function(v,i){ var o=document.createElement('option'); o.value=i; o.textContent=v.label; selVar.appendChild(o); });
-    tdName.appendChild(title); tdName.appendChild(selVar);
-
-    var tdCost=document.createElement('td'); tdCost.className='num';
-    var cost=document.createElement('input'); cost.className='num'; cost.inputMode='decimal'; cost.placeholder='0'; cost.setAttribute('aria-label','Koszt'); tdCost.appendChild(cost);
-
-    var tdLim=document.createElement('td'); tdLim.className='num';
-    var tdNeed=document.createElement('td'); tdNeed.className='num';
-    var tdGrant=document.createElement('td'); tdGrant.className='num';
-    var tdGross=document.createElement('td'); tdGross.className='num';
-    var tdCopay=document.createElement('td'); tdCopay.className='num';
-
-    tr.appendChild(tdSel); tr.appendChild(tdName); tr.appendChild(tdCost); tr.appendChild(tdLim); tr.appendChild(tdNeed); tr.appendChild(tdGrant); tr.appendChild(tdGross); tr.appendChild(tdCopay);
-    tb.appendChild(tr);
-
-    row.els={sel:sel,selVar:selVar,cost:cost,tdLim:tdLim,tdNeed:tdNeed,tdGrant:tdGrant,tdGross:tdGross,tdCopay:tdCopay};
-    state.mainRows.push(row);
-
-    sel.addEventListener('change', function(){
-      row.sel=sel.checked;
-      if (row.sel && comp.heat){
-        state.mainRows.forEach(function(r,j){ if(j!==idx && DATA_MAIN[r.compIdx].heat){ r.sel=false; r.els.sel.checked=false; recalcMainRow(j); } });
-      }
-      recalcMainRow(idx);
-      updateAggregates();
-      autosave();
-    });
-    selVar.addEventListener('change', function(){
-      row.vIdx=Number(selVar.value);
-      recalcMainRow(idx);
-      updateAggregates();
-      autosave();
-    });
-    cost.addEventListener('input', function(){
-      row.costInput=toNum(cost.value);
-      debRecalcMainRow(idx)();
-      debUpdateAggregates();
-    });
-    cost.addEventListener('change', autosave);
-  });
+function categoryLabelFromSelection(){
+  const cat = selectedHeatCategory();
+  const map={GRUNT:'GRUNT',PW_PLUS:'PW+',BIOMASA:'BIOMASA'};
+  q('#catLabel').textContent = cat? map[cat] : '—';
 }
-function debRecalcMainRow(i){ return debounce(function(){ recalcMainRow(i); },140); }
 
 /* ===== ocieplenie/stolarka ===== */
-var RATES_M2 = {
-  sciany: { P:180, M:210, T:250 },
-  strop:  { P: 80, M:140, T:200 },
-  podloga:{ P: 80, M:100, T:150 },
-  okna:   { P:650, M:1050, T:1500 },
-  drzwi:  { P:2000, M:2500, T:3000 },
-  bramy:  { P: 600, M:1050, T:1500 }
-};
-function rateForKey(key){
-  if (state.level.name==='PODSTAWOWY') return (RATES_M2[key]||{}).P||0;
-  if (state.level.name==='PODWYŻSZONY') return (RATES_M2[key]||{}).M||0;
-  if (state.level.name==='NAJWYŻSZY')   return (RATES_M2[key]||{}).T||0;
-  return 0;
-}
-var DATA_ENV = [
+const DATA_ENV=[
   {key:'sciany', name:'Ocieplenie ścian zewnętrznych'},
   {key:'strop',  name:'Ocieplenie dachu / stropodachu'},
   {key:'podloga',name:'Ocieplenie podłogi na gruncie'},
@@ -412,323 +427,504 @@ var DATA_ENV = [
   {key:'drzwi',  name:'Drzwi zewnętrzne'},
   {key:'bramy',  name:'Brama garażowa'}
 ];
-function buildEnv(){
-  var tb=q('#tbodyEnv'); tb.innerHTML=''; state.envRows=[];
-  DATA_ENV.forEach(function(it,idx){
-    var tr=document.createElement('tr');
-    var r={ key:it.key, sel:false, m2:0, ownRate:0, costNet:0, _grant:0,_gross:0,_copay:0,_hit:false, els:{} };
+function rateForKey(key){
+  const r=RATES_M2[key]||{};
+  if (state.level.name==='PODSTAWOWY') return r.P||0;
+  if (state.level.name==='PODWYŻSZONY') return r.M||0;
+  if (state.level.name==='NAJWYŻSZY') return r.T||0;
+  return 0;
+}
 
-    var tdSel=document.createElement('td'); var sel=document.createElement('input'); sel.type='checkbox'; sel.setAttribute('aria-label','Wybierz pozycję'); tdSel.appendChild(sel);
-    var tdName=document.createElement('td'); tdName.textContent=it.name;
+/* ===== budowa tabel ===== */
+function buildMain(){
+  const tb=q('#tbodyMain'); tb.innerHTML=''; state.mainRows=[];
+  DATA_MAIN.forEach((comp, idx)=>{
+    const tr=document.createElement('tr');
+    const row={compIdx:idx, heat:comp.heat, sel:false, vIdx:0, costInput:0, _costNet:0,_grant:0,_gross:0,_copay:0,_need:0,_hit:false, els:{}};
 
-    var tdM2=document.createElement('td'); tdM2.className='num'; var m2=document.createElement('input'); m2.className='num'; m2.inputMode='decimal'; m2.placeholder='0'; m2.setAttribute('aria-label','Powierzchnia m2'); tdM2.appendChild(m2);
-    var tdOwn=document.createElement('td'); tdOwn.className='num'; var own=document.createElement('input'); own.className='num'; own.inputMode='decimal'; own.placeholder='0'; own.setAttribute('aria-label','Twoja cena za m2'); tdOwn.appendChild(own);
+    const tdSel=document.createElement('td'); const sel=document.createElement('input'); sel.type='checkbox'; sel.setAttribute('aria-label','Wybierz wiersz'); tdSel.append(sel);
+    const tdName=document.createElement('td'); const title=document.createElement('div'); title.textContent=comp.name;
+    const selVar=document.createElement('select'); comp.variants.forEach((v,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=v.label; selVar.appendChild(o); });
+    tdName.append(title, selVar);
 
-    var tdRate=document.createElement('td'); tdRate.className='num';
-    var tdCost=document.createElement('td'); tdCost.className='num';
-    var tdCap=document.createElement('td'); tdCap.className='num';
-    var tdGrant=document.createElement('td'); tdGrant.className='num';
-    var tdGross=document.createElement('td'); tdGross.className='num';
-    var tdCopay=document.createElement('td'); tdCopay.className='num';
+    const tdCost=document.createElement('td'); tdCost.className='num';
+    const cost=document.createElement('input'); cost.className='num'; cost.inputMode='decimal'; cost.placeholder='0'; cost.setAttribute('aria-label','Koszt'); tdCost.append(cost);
 
-    tr.appendChild(tdSel); tr.appendChild(tdName); tr.appendChild(tdM2); tr.appendChild(tdOwn); tr.appendChild(tdRate); tr.appendChild(tdCost); tr.appendChild(tdCap); tr.appendChild(tdGrant); tr.appendChild(tdGross); tr.appendChild(tdCopay);
-    tb.appendChild(tr);
+    const tdLim=document.createElement('td'); tdLim.className='num hide-sm admin-only';
+    const tdNeed=document.createElement('td'); tdNeed.className='num hide-sm admin-only';
+    const tdGrant=document.createElement('td'); tdGrant.className='num';
+    const tdGross=document.createElement('td'); tdGross.className='num hide-sm admin-only';
+    const tdCopay=document.createElement('td'); tdCopay.className='num';
 
-    r.els={sel:sel,m2:m2,ownRate:own,tdRateMax:tdRate,tdCostNet:tdCost,tdLimit:tdCap,tdGrant:tdGrant,tdGross:tdGross,tdCopay:tdCopay};
-    state.envRows.push(r);
+    tr.append(tdSel,tdName,tdCost,tdLim,tdNeed,tdGrant,tdGross,tdCopay); tb.appendChild(tr);
+    row.els={sel,selVar,cost,tdLim,tdNeed,tdGrant,tdGross,tdCopay}; state.mainRows.push(row);
 
-    sel.addEventListener('change', function(){
-      r.sel=sel.checked;
-      recalcEnvRow(idx);
-      updateAggregates();
-      autosave();
+    sel.addEventListener('change', ()=>{
+      row.sel=sel.checked;
+      if (row.sel && comp.heat){
+        state.mainRows.forEach((r,j)=>{ if(j!==idx && DATA_MAIN[r.compIdx].heat){ r.sel=false; r.els.sel.checked=false; recalcMainRow(j); } });
+      }
+      recalcMainRow(idx); updateAggregates(); autosave(); categoryLabelFromSelection();
     });
-    m2.addEventListener('input', function(){
-      r.m2=toNum(m2.value);
-      debRecalcEnvRow(idx)();
-      debUpdateAggregates();
+    selVar.addEventListener('change', ()=>{
+      row.vIdx=Number(selVar.value); recalcMainRow(idx); updateAggregates(); autosave(); categoryLabelFromSelection();
     });
-    own.addEventListener('input', function(){
-      r.ownRate=toNum(own.value);
-      debRecalcEnvRow(idx)();
-      debUpdateAggregates();
+    cost.addEventListener('input', ()=>{
+      row.costInput=toNum(cost.value); debRecalcMainRow(idx)(); debUpdateAggregates();
     });
-    m2.addEventListener('change', autosave);
-    own.addEventListener('change', autosave);
+    cost.addEventListener('change', autosave);
   });
 }
-function debRecalcEnvRow(i){ return debounce(function(){ recalcEnvRow(i); },140); }
+function buildEnv(){
+  const tb=q('#tbodyEnv'); tb.innerHTML=''; state.envRows=[];
+  DATA_ENV.forEach((it,idx)=>{
+    const tr=document.createElement('tr');
+    const r={ key:it.key, sel:false, m2:0, ownRate:0, costNet:0, _grant:0,_gross:0,_copay:0,_hit:false, els:{} };
 
-/* ===== row recalcs ===== */
-function setGrantCell(td, value, hit){
-  td.innerHTML = fmt(value) + (hit ? ' <span class="cap-badge">LIMIT</span>' : '');
+    const tdSel=document.createElement('td'); const sel=document.createElement('input'); sel.type='checkbox'; sel.setAttribute('aria-label','Wybierz pozycję'); tdSel.append(sel);
+    const tdName=document.createElement('td'); tdName.textContent=it.name;
+
+    const tdM2=document.createElement('td'); tdM2.className='num'; const m2=document.createElement('input'); m2.className='num'; m2.inputMode='decimal'; m2.placeholder='0'; tdM2.append(m2);
+    const tdOwn=document.createElement('td'); tdOwn.className='num'; const own=document.createElement('input'); own.className='num'; own.inputMode='decimal'; own.placeholder='0'; tdOwn.append(own);
+
+    const tdRate=document.createElement('td'); tdRate.className='num admin-only';
+    const tdCost=document.createElement('td'); tdCost.className='num';
+    const tdCap=document.createElement('td'); tdCap.className='num admin-only';
+    const tdGrant=document.createElement('td'); tdGrant.className='num';
+    const tdGross=document.createElement('td'); tdGross.className='num hide-sm admin-only';
+    const tdCopay=document.createElement('td'); tdCopay.className='num';
+
+    tr.append(tdSel,tdName,tdM2,tdOwn,tdRate,tdCost,tdCap,tdGrant,tdGross,tdCopay); tb.appendChild(tr);
+    r.els={sel,m2,ownRate:own,tdRateMax:tdRate,tdCostNet:tdCost,tdLimit:tdCap,tdGrant,tdGross,tdCopay}; state.envRows.push(r);
+
+    sel.addEventListener('change', ()=>{ r.sel=sel.checked; recalcEnvRow(idx); updateAggregates(); autosave(); });
+    m2.addEventListener('input', ()=>{ r.m2=toNum(m2.value); debRecalcEnvRow(idx)(); debUpdateAggregates(); });
+    own.addEventListener('input', ()=>{ r.ownRate=toNum(own.value); debRecalcEnvRow(idx)(); debUpdateAggregates(); });
+    m2.addEventListener('change', autosave); own.addEventListener('change', autosave);
+  });
 }
+const debRecalcMainRow=(i)=>debounce(()=>recalcMainRow(i),140);
+const debRecalcEnvRow =(i)=>debounce(()=>recalcEnvRow(i),140);
+
+/* ===== kalkulacje wierszy ===== */
+function setGrantCell(td, value, hit){ td.innerHTML = fmt(value) + (hit ? ' <span class="cap-badge">LIMIT</span>' : ''); }
 function recalcMainRow(i){
-  var r=state.mainRows[i]; if(!r) return;
-  var comp=DATA_MAIN[r.compIdx]; var v=comp.variants[r.vIdx];
-  var lim = limActive(v.lim);
-  r.els.tdLim.textContent = fmt(lim);
+  const r=state.mainRows[i]; if(!r) return;
+  const comp=DATA_MAIN[r.compIdx]; const v=comp.variants[r.vIdx];
+  const lim=limActive(v.lim); r.els.tdLim.textContent=fmt(lim);
 
-  var net = state.priceMode==='BRUTTO' ? (r.costInput/(1+VAT)) : r.costInput;
-  var need  = state.level.pct>0 ? Math.ceil(lim/state.level.pct) : 0;
+  const net = state.priceMode==='BRUTTO' ? (r.costInput/(1+VAT)) : r.costInput;
+  const grant0 = net*(state.level.pct||0);
+  const grant = Math.min(grant0, lim);
+  const need  = state.level.pct>0 ? Math.ceil(lim/state.level.pct) : 0;
+  const gross = net*(1+VAT);
+  const own   = Math.max(0, gross - grant);
 
-  var res = calcGrant(net, state.level.pct, lim);
-  r._costNet=net; r._grant=res.grant; r._gross=res.gross; r._copay=res.copay; r._need=need; r._hit=res.hit;
+  r._costNet=net; r._grant=grant; r._gross=gross; r._copay=own; r._need=need; r._hit=(grant0>lim+1e-9);
 
-  if (!r.sel){
-    r.els.tdNeed.textContent = '—';
-    r.els.tdGrant.innerHTML = '—';
-    r.els.tdGross.textContent = '—';
-    r.els.tdCopay.textContent = '—';
-  } else {
-    r.els.tdNeed.textContent = need?fmt(need):'—';
-    setGrantCell(r.els.tdGrant, res.grant, res.hit);
-    r.els.tdGross.textContent = fmt(res.gross);
-    r.els.tdCopay.textContent = fmt(res.copay);
-  }
+  if(!r.sel){ r.els.tdNeed.textContent='—'; r.els.tdGrant.innerHTML='—'; r.els.tdGross.textContent='—'; r.els.tdCopay.textContent='—'; }
+  else{ r.els.tdNeed.textContent=need?fmt(need):'—'; setGrantCell(r.els.tdGrant,grant,r._hit); r.els.tdGross.textContent=fmt(gross); r.els.tdCopay.textContent=fmt(own); }
 }
 function recalcEnvRow(i){
-  var r=state.envRows[i]; if(!r) return;
-  var per = rateForKey(r.key) || 0; // maks. dotacja/m2 (NETTO)
-  r.els.tdRateMax.textContent = fmt(per);
+  const r=state.envRows[i]; if(!r) return;
+  const per=rateForKey(r.key)||0; r.els.tdRateMax.textContent=fmt(per);
 
-  var ownNet = state.priceMode==='BRUTTO' ? (r.ownRate/(1+VAT)) : r.ownRate;
-  var costNet = (r.m2||0) * (ownNet||0);
-  var cap = (r.m2||0) * per; // limit DOTACJI z m2
+  const ownNet = state.priceMode==='BRUTTO' ? (r.ownRate/(1+VAT)) : r.ownRate;
+  const costNet=(r.m2||0)*(ownNet||0);
+  const cap=(r.m2||0)*per;
+  const grant0=costNet*(state.level.pct||0);
+  const grant=Math.min(grant0, cap);
+  const gross=costNet*(1+VAT);
+  const own=Math.max(0, gross - grant);
 
-  var res = calcGrant(costNet, state.level.pct, cap);
-  r.costNet=costNet; r._grant=res.grant; r._gross=res.gross; r._copay=res.copay; r._hit=res.hit;
+  r.costNet=costNet; r._grant=grant; r._gross=gross; r._copay=own; r._hit=(grant0>cap+1e-9);
 
-  if (!r.sel){
-    r.els.tdCostNet.textContent = '—';
-    r.els.tdLimit.textContent = fmt(cap);
-    r.els.tdGrant.innerHTML = '—';
-    r.els.tdGross.textContent = '—';
-    r.els.tdCopay.textContent = '—';
-  } else {
-    r.els.tdCostNet.textContent = fmt(costNet);
-    r.els.tdLimit.textContent = fmt(cap);
-    setGrantCell(r.els.tdGrant, res.grant, res.hit);
-    r.els.tdGross.textContent = fmt(res.gross);
-    r.els.tdCopay.textContent = fmt(res.copay);
-  }
+  if(!r.sel){ r.els.tdCostNet.textContent='—'; r.els.tdLimit.textContent=fmt(cap); r.els.tdGrant.innerHTML='—'; r.els.tdGross.textContent='—'; r.els.tdCopay.textContent='—'; }
+  else{ r.els.tdCostNet.textContent=fmt(costNet); r.els.tdLimit.textContent=fmt(cap); setGrantCell(r.els.tdGrant,grant,r._hit); r.els.tdGross.textContent=fmt(gross); r.els.tdCopay.textContent=fmt(own); }
 }
 
-/* ===== totals / summary (tylko zaznaczone) ===== */
-function getTotalsMain(){
-  var sumGrant=0,sumGross=0,sumCopay=0,countSel=0;
-  state.mainRows.forEach(function(r){ if(r.sel){ sumGrant+=r._grant||0; sumGross+=r._gross||0; sumCopay+=r._copay||0; countSel++; } });
-  return {sumGrant:sumGrant,sumGross:sumGross,sumCopay:sumCopay,countSel:countSel};
-}
-function getTotalsEnv(){
-  var sumGrant=0,sumGross=0,sumCopay=0,countSel=0;
-  state.envRows.forEach(function(r){ if(r.sel){ sumGrant+=r._grant||0; sumGross+=r._gross||0; sumCopay+=r._copay||0; countSel++; } });
-  return {sumGrant:sumGrant,sumGross:sumGross,sumCopay:sumCopay,countSel:countSel};
-}
+/* ===== sumy (przed limitem pakietu) ===== */
+function getTotalsMain(){ let sumGrant=0,sumGross=0,sumCopay=0,countSel=0; state.mainRows.forEach(r=>{ if(r.sel){ sumGrant+=r._grant||0; sumGross+=r._gross||0; sumCopay+=r._copay||0; countSel++; } }); return {sumGrant,sumGross,sumCopay,countSel}; }
+function getTotalsEnv(){ let sumGrant=0,sumGross=0,sumCopay=0,countSel=0; state.envRows.forEach(r=>{ if(r.sel){ sumGrant+=r._grant||0; sumGross+=r._gross||0; sumCopay+=r._copay||0; countSel++; } }); return {sumGrant,sumGross,sumCopay,countSel}; }
 function renderTotals(){
-  var m=getTotalsMain(), e=getTotalsEnv();
-  q('#sumMain').textContent=fmt(m.sumGrant);
-  q('#sumMainGross').textContent=fmt(m.sumGross);
-  q('#sumMainCopay').textContent=fmt(m.sumCopay);
-  q('#selCountMain').textContent=m.countSel;
-
-  q('#sumEnvGrant').textContent=fmt(e.sumGrant);
-  q('#sumEnvGross').textContent=fmt(e.sumGross);
-  q('#sumEnvCopay').textContent=fmt(e.sumCopay);
-  q('#selCountEnv').textContent=e.countSel;
+  const m=getTotalsMain(), e=getTotalsEnv();
+  q('#sumMain').textContent=fmt(m.sumGrant); q('#sumMainGross').textContent=fmt(m.sumGross); q('#sumMainCopay').textContent=fmt(m.sumCopay); q('#selCountMain').textContent=m.countSel;
+  q('#sumEnvGrant').textContent=fmt(e.sumGrant); q('#sumEnvGross').textContent=fmt(e.sumGross); q('#sumEnvCopay').textContent=fmt(e.sumCopay); q('#selCountEnv').textContent=e.countSel;
 }
-function renderSummary(){
-  var m=getTotalsMain(), e=getTotalsEnv();
-  var sumGrant=(m.sumGrant||0)+(e.sumGrant||0);
-  var sumCopay=(m.sumCopay||0)+(e.sumCopay||0);
 
-  var need=0;
-  state.mainRows.forEach(function(r){
+/* ===== wykrycie źródła pakietu i limitu ===== */
+function selectedHeatCategory(){
+  for (let i=0;i<state.mainRows.length;i++){
+    const r=state.mainRows[i]; if(!r.sel) continue;
+    const comp=DATA_MAIN[r.compIdx]; if(!comp.heat) continue;
+    const label=comp.variants[r.vIdx].label.toLowerCase();
+    if (label.includes('gruntowa')) return 'GRUNT';
+    if (label.includes('powietrze/woda') && label.includes('wyższa')) return 'PW_PLUS';
+    if (DATA_MAIN[r.compIdx].id==='GAZ' || DATA_MAIN[r.compIdx].id==='PEL') return 'BIOMASS';
+    return null; // inne: brak pakietu
+  }
+  return null;
+}
+function detectPackCap(){
+  const cat=selectedHeatCategory(); if(!cat) return {cap:null, nd:false, cat:null};
+  const eu=q('#euDemand').value || 'EU_ABOVE_140';
+  const lvl=state.level.name;
+  const L=(lvl==='PODSTAWOWY'?'P':(lvl==='PODWYŻSZONY'?'M':(lvl==='NAJWYŻSZY'?'T':null)));
+  if(!L) return {cap:null, nd:false, cat};
+  const cap=PACK_CAPS[cat] && PACK_CAPS[cat][eu] ? PACK_CAPS[cat][eu][L] : null;
+  const nd = (cap==null); // niedostępne („nd*”)
+  return {cap, nd, cat, eu, L};
+}
+function toggleWarnIfNeeded(){
+  const info=detectPackCap();
+  const showWarn = info.nd && state.level.name==='NAJWYŻSZY' && (info.cat==='PW_PLUS'||info.cat==='GRUNT');
+  q('#warnTop').classList.toggle('hidden', !showWarn);
+}
+
+/* ===== podsumowanie z limitem pakietu ===== */
+function renderSummary(){
+  const m=getTotalsMain(), e=getTotalsEnv();
+  const sumGrant=(m.sumGrant||0)+(e.sumGrant||0);
+  const sumCopayBase=(m.sumCopay||0)+(e.sumCopay||0);
+
+  const info=detectPackCap();
+  const capProg = info.cap!=null ? info.cap : null;
+  const noPack = (info.cat==null || info.cap==null);
+
+  const grantCapped = capProg!=null ? Math.min(sumGrant, capProg) : sumGrant;
+  const overCap = capProg!=null ? Math.max(0, sumGrant - capProg) : 0;
+  const sumCopayAll = sumCopayBase + overCap;
+
+  // Need (minimalny wymagany netto by uzyskać max limity pojedyncze)
+  let need=0;
+  state.mainRows.forEach(r=>{
     if(r.sel && state.level.pct>0){
-      var lim = limActive(DATA_MAIN[r.compIdx].variants[r.vIdx].lim);
+      const lim = limActive(DATA_MAIN[r.compIdx].variants[r.vIdx].lim);
       need += Math.ceil(lim/state.level.pct);
     }
   });
-  state.envRows.forEach(function(r){
+  state.envRows.forEach(r=>{
     if(r.sel && state.level.pct>0){
-      var cap = (r.m2||0) * (rateForKey(r.key)||0);
+      const cap = (r.m2||0) * (rateForKey(r.key)||0);
       need += Math.ceil(cap/state.level.pct);
     }
   });
 
   q('#sumGrantAll').textContent=fmt(sumGrant);
-  q('#sumCopayAll').textContent=fmt(sumCopay);
+  q('#sumCapProg').textContent=capProg!=null ? fmt(capProg) : '—';
+  q('#capBadge').classList.toggle('hidden', !(capProg!=null && sumGrant>capProg+1e-9));
+  q('#sumGrantCapped').textContent=fmt(grantCapped);
+  q('#sumOverCap').textContent=fmt(overCap);
+  q('#sumCopayAll').textContent=fmt(sumCopayAll);
   q('#sumNeedAll').textContent=state.level.pct?fmt(need):'—';
+
+  q('#noteOver').classList.toggle('hidden', !(overCap>0));
+  q('#noteNoPack').classList.toggle('hidden', !noPack);
+  q('#sumPanel').classList.toggle('over-panel', overCap>0);
 }
+
+/* ===== UI: profile ===== */
+q('#btnProfileP').addEventListener('click', ()=>{
+  q('#typ').value=''; q('#doch_mies').value=''; q('#doch_roczny').value='135000';
+  q('#euDemand').value='EU_ABOVE_140'; refreshLevel();
+});
+q('#btnProfileM').addEventListener('click', ()=>{
+  q('#typ').value='WIELO'; q('#doch_mies').value='2250'; q('#doch_roczny').value='';
+  q('#euDemand').value='EU_ABOVE_140'; refreshLevel();
+});
+q('#btnProfileT').addEventListener('click', ()=>{
+  q('#typ').value='WIELO'; q('#doch_mies').value='1300'; q('#doch_roczny').value='';
+  q('#euDemand').value='EU_ABOVE_140'; refreshLevel();
+});
+
+/* ===== agregacja ===== */
 function updateAggregates(){ renderTotals(); renderSummary(); }
-var debUpdateAggregates = debounce(updateAggregates, 160);
+const debUpdateAggregates=debounce(updateAggregates,160);
+function recomputeAllRows(){ state.mainRows.forEach((i)=>recalcMainRow(i)); state.envRows.forEach((i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
 
-/* ===== recompute all rows ===== */
-function recomputeAllRows(){
-  state.mainRows.forEach(function(_,i){ recalcMainRow(i); });
-  state.envRows.forEach(function(_,i){ recalcEnvRow(i); });
-}
-
-/* ===== preset / auto ===== */
-function presetMain(){
-  state.mainRows.forEach(function(r,i){
-    r.sel=false; r.els.sel.checked=false; r.vIdx=0; r.els.selVar.value='0';
-    r.costInput=0; r.els.cost.value='';
-    recalcMainRow(i);
-  });
-  updateAggregates();
-  autosave();
-}
-function presetEnv(){
-  state.envRows.forEach(function(r,i){
-    r.sel=false; r.els.sel.checked=false; r.m2=0; r.els.m2.value='';
-    r.ownRate=0; r.els.ownRate.value='';
-    recalcEnvRow(i);
-  });
-  updateAggregates();
-  autosave();
-}
+/* ===== auto / preset ===== */
 function autoNeedMain(){
-  state.mainRows.forEach(function(r,i){
+  state.mainRows.forEach((r,i)=>{
     if(!r.sel) return;
-    var lim = limActive(DATA_MAIN[r.compIdx].variants[r.vIdx].lim);
+    const lim=limActive(DATA_MAIN[r.compIdx].variants[r.vIdx].lim);
     if(state.level.pct>0){
-      var needNet = Math.ceil(lim/state.level.pct);
-      r.costInput = state.priceMode==='BRUTTO' ? needNet*(1+VAT) : needNet;
-      r.els.cost.value = String(Math.round(r.costInput));
+      const needNet = Math.ceil(lim/state.level.pct);
+      r.costInput = state.priceMode==='BRUTTO' ? Math.round(needNet*(1+VAT)) : Math.round(needNet);
+      r.els.cost.value = String(r.costInput);
       recalcMainRow(i);
     }
   });
-  updateAggregates();
-  autosave();
+  updateAggregates(); autosave();
 }
 function autoNeedEnv(){
-  state.envRows.forEach(function(r,i){
+  state.envRows.forEach((r,i)=>{
     if(!r.sel) return;
-    var per = rateForKey(r.key)||0;
+    const per=rateForKey(r.key)||0;
     if(state.level.pct>0){
-      var needPerM2Net = per/(state.level.pct||1);
-      r.ownRate = Math.round(state.priceMode==='BRUTTO' ? needPerM2Net*(1+VAT) : needPerM2Net);
+      const needPerNet = per/(state.level.pct||1);
+      r.ownRate = Math.round(state.priceMode==='BRUTTO' ? needPerNet*(1+VAT) : needPerNet);
       r.els.ownRate.value = String(r.ownRate);
       recalcEnvRow(i);
     }
   });
-  updateAggregates();
-  autosave();
+  updateAggregates(); autosave();
 }
+function presetMain(){ state.mainRows.forEach((r,i)=>{ r.sel=false; r.els.sel.checked=false; r.vIdx=0; r.els.selVar.value='0'; r.costInput=0; r.els.cost.value=''; recalcMainRow(i); }); updateAggregates(); autosave(); }
+function presetEnv(){ state.envRows.forEach((r,i)=>{ r.sel=false; r.els.sel.checked=false; r.m2=0; r.els.m2.value=''; r.ownRate=0; r.els.ownRate.value=''; recalcEnvRow(i); }); updateAggregates(); autosave(); }
+function presetAll(){ presetMain(); presetEnv(); }
 
 /* ===== CSV ===== */
-function csvEscape(v){ var s=String(v==null ? '' : v); return /[",;\n]/.test(s)? '"' + s.replace(/"/g,'""') + '"' : s; }
+function csvEscape(v){ const s=String(v ?? ''); return /[",;\n]/.test(s)? '"' + s.replace(/"/g,'""') + '"' : s; }
 function downloadCSV(name, rows){
-  var csv = rows.map(function(r){ return r.map(csvEscape).join(';'); }).join('\n');
-  var blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = name.endsWith('.csv') ? name : (name + '.csv');
-  a.click();
-  URL.revokeObjectURL(a.href);
+  const csv = rows.map(r => r.map(csvEscape).join(';')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = name.endsWith('.csv') ? name : `${name}.csv`; a.click(); URL.revokeObjectURL(a.href);
 }
 function exportCSVMain(){
-  var out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (8% VAT)','Dopłata','Limit użyty?']];
-  state.mainRows.forEach(function(r){
-    var comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
-    out.push([ r.sel?'TAK':'NIE', comp.name, v.label, Math.round(r._costNet||0), lim, r.sel?(r._need||''):'', Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE' ]);
+  const out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata']];
+  state.mainRows.forEach(r=>{
+    const comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
+    out.push([ r.sel?'TAK':'NIE', comp.name, v.label, Math.round(r._costNet||0), lim, r.sel?(r._need||''):'', Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0) ]);
   });
-  downloadCSV('cp2025_glowne_'+todayStr(), out);
+  downloadCSV('cp2025_glowne', out);
 }
 function exportCSVEnv(){
-  var out=[['Wybrany','Pozycja','Pow m2 x cena_m2','Koszt netto','Limit z m2','Dotacja','Koszt brutto (8% VAT)','Dopłata','Limit użyty?']];
-  state.envRows.forEach(function(r,i){
-    var base=DATA_ENV[i]; var cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
-    out.push([ r.sel?'TAK':'NIE', base.name, String(r.m2||0)+' m2 x '+String(r.ownRate||0), Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE' ]);
+  const out=[['Wybrany','Pozycja','Pow m2','Twoja cena/m2','Koszt netto','Limit z m2','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata']];
+  state.envRows.forEach((r,i)=>{
+    const base=DATA_ENV[i]; const cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
+    out.push([ r.sel?'TAK':'NIE', base.name, r.m2||0, r.ownRate||0, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0) ]);
   });
-  downloadCSV('cp2025_ocieplenie_'+todayStr(), out);
+  downloadCSV('cp2025_ocieplenie', out);
 }
 function exportCSVAll(){
-  var out=[['Sekcja','Nazwa','Opis','Koszt netto','Limit (aktywny)','Dotacja','Koszt brutto (8% VAT)','Dopłata','Limit użyty?']];
-  state.mainRows.forEach(function(r){
-    var comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
-    out.push(['Glowne', comp.name, v.label, Math.round(r._costNet||0), lim, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE']);
+  const m=getTotalsMain(), e=getTotalsEnv();
+  const sumGrant=(m.sumGrant||0)+(e.sumGrant||0);
+  const info=detectPackCap();
+  const capProg = info.cap!=null ? info.cap : '';
+  const overCap = capProg? Math.max(0, sumGrant-capProg) : 0;
+  const out=[['Sekcja','Nazwa','Opis','Koszt netto','Limit (aktywny)','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata']];
+  state.mainRows.forEach(r=>{
+    const comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
+    out.push(['Glowne', comp.name, v.label, Math.round(r._costNet||0), lim, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
   });
-  state.envRows.forEach(function(r,i){
-    var base=DATA_ENV[i], cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
-    out.push(['Ocieplenie', base.name, String(r.m2||0)+' m2 x '+String(r.ownRate||0), Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE']);
+  state.envRows.forEach((r,i)=>{
+    const base=DATA_ENV[i], cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
+    out.push(['Ocieplenie', base.name, `${r.m2||0} m2 x ${r.ownRate||0}`, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
   });
-  downloadCSV('cp2025_laczny_'+todayStr(), out);
+  out.push([]);
+  out.push(['PODSUMOWANIE','','','', 'Limit pakietu', capProg||'—', 'Nadwyżka ponad limit', overCap]);
+  downloadCSV('cp2025_laczny', out);
 }
+
+/* ===== DRUK — tryby ===== */
+function setPrintMode(mode){ // 'client' | 'seller-full' | 'seller-short' | 'seller-tech' | null
+  document.body.classList.remove('print-client');
+  document.body.dataset.printMode = mode || '';
+  if (mode==='client'){ document.body.classList.add('print-client'); }
+}
+function doPrint(mode){
+  setPrintMode(mode);
+  // Dla klienta – dodaj nagłówek z danymi firmy ponad wrap
+  if (mode==='client'){
+    ensureClientHeader();
+  } else {
+    removeClientHeader();
+  }
+  window.print();
+  setTimeout(()=>{ setPrintMode(null); }, 300);
+}
+
+/* ===== Klient – nagłówek do druku ===== */
+let clientHdr;
+function ensureClientHeader(){
+  if (clientHdr) return;
+  clientHdr = document.createElement('div');
+  clientHdr.id='clientPrintHeader';
+  clientHdr.className='panel';
+  clientHdr.innerHTML = `
+    <div class="client-header">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="18" fill="#0e1538"/><path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text></svg>
+      </div>
+      <div>
+        <div class="client-title">Kalkulacja dotacji – Czyste Powietrze 2025</div>
+        <div class="client-meta"><b>Przedsiębiorstwo Wielobranżowe ARKON sp.j. Czesław i Krystyna Sobaniak</b></div>
+        <div class="client-meta">ul. Fabryczna 12 C, 59‑170 Przemków • NIP: 5020038830 • KRS: 0000255361</div>
+        <div class="client-meta">Data: <span id="printDate">${nowStr()}</span></div>
+      </div>
+    </div>
+    <div class="muted" style="color:#9aa8d6">Poniżej przedstawiono kalkulację dotacji i dopłaty klienta. Kwoty brutto liczone z wybranego VAT.</div>
+  `;
+  document.querySelector('.wrap').prepend(clientHdr);
+}
+function removeClientHeader(){ if(clientHdr){ clientHdr.remove(); clientHdr=null; } }
+
+/* ===== GENERATOR UPROSZCZONEGO I PEŁNEGO HTML (do wysyłki) ===== */
+function fmtPL(n){ return INT.format(Math.round(n||0)); }
+function collectSelectedRows(){
+  // Zbierz wybrane pozycje
+  const mains=state.mainRows.map((r)=>({sel:r.sel, comp:DATA_MAIN[r.compIdx], vIdx:r.vIdx, net:r._costNet, grant:r._grant, gross:r._gross, copay:r._copay}));
+  const envs=state.envRows.map((r,i)=>({sel:r.sel, name:DATA_ENV[i].name, net:r.costNet, grant:r._grant, gross:r._gross, copay:r._copay, m2:r.m2, own:r.ownRate}));
+  return {mains, envs};
+}
+function currentSummary(){
+  const m=getTotalsMain(), e=getTotalsEnv();
+  const sumGrant=(m.sumGrant||0)+(e.sumGrant||0);
+  const sumGross=(m.sumGross||0)+(e.sumGross||0);
+  const sumCopay=(m.sumCopay||0)+(e.sumCopay||0);
+  const info=detectPackCap();
+  const cap = info.cap!=null? info.cap : null;
+  const over = cap!=null? Math.max(0,sumGrant-cap) : 0;
+  const grantCapped = cap!=null? Math.min(sumGrant,cap) : sumGrant;
+  return {sumGrant,sumGross,sumCopay,cap,over,grantCapped};
+}
+function composeOfferHTML({client=true}={}){
+  const {mains,envs}=collectSelectedRows();
+  const s=currentSummary();
+  const rows=[];
+  mains.forEach(x=>{ if(x.sel) rows.push({name:`${x.comp.name} – ${x.comp.variants[x.vIdx].label}`, gross:x.gross, grant:x.grant, copay:x.copay}); });
+  envs.forEach(x=>{ if(x.sel) rows.push({name:`${x.name}`, gross:x.gross, grant:x.grant, copay:x.copay}); });
+
+  const title = client? 'Oferta dla klienta' : 'Raport pełny (sprzedawca)';
+  const css = `
+    body{font:14px/1.35 system-ui,Segoe UI,Roboto,Arial;margin:0;padding:20px;color:#111}
+    .hdr{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+    .logo{width:56px;height:56px}
+    .meta{font-size:12px;color:#333}
+    h1{font-size:18px;margin:6px 0}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:8px;border-bottom:1px solid #ddd;text-align:left}
+    th.num,td.num{text-align:right}
+    .sum{margin-top:10px;padding-top:8px;border-top:2px solid #000}
+    .signs{display:flex;gap:40px;margin-top:24px}
+    .sign{flex:1;border-top:1px solid #666;padding-top:6px;text-align:center;font-size:12px}
+    .soft{color:#666}
+  `;
+  const infoLine = client
+    ? (s.cap? <div class="soft">${s.over>0? 'Osiągnięto maksymalny limit dotacji w programie – dodatkowe koszty pokrywa klient.' : 'Dotacja mieszcząca się w limicie programu.'}</div> : '')
+    : <div class="soft">Limit pakietu: ${s.cap? fmtPL(s.cap)+' zł' : '—'} • Nadwyżka: ${fmtPL(s.over)} zł</div>;
+  const logo = <svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="18" fill="#0e1538"/><path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text></svg>;
+  const rowsHtml = rows.map(r=><tr><td>${r.name}</td><td class="num">${fmtPL(r.gross)} zł</td><td class="num">${fmtPL(r.grant)} zł</td><td class="num">${fmtPL(r.copay)} zł</td></tr>).join('');
+  const html = `
+  <!doctype html><meta charset="utf-8"><title>${title} – Arkon</title>
+  <style>${css}</style>
+  <div class="hdr">
+    ${logo}
+    <div>
+      <h1>${title}</h1>
+      <div class="meta"><b>Przedsiębiorstwo Wielobranżowe ARKON sp.j. Czesław i Krystyna Sobaniak</b></div>
+      <div class="meta">ul. Fabryczna 12 C, 59‑170 Przemków • NIP: 5020038830 • KRS: 0000255361</div>
+      <div class="meta">Data: ${nowStr()}</div>
+      ${infoLine}
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Pozycja</th><th class="num">Koszt brutto</th><th class="num">Dotacja</th><th class="num">Dopłata</th></tr></thead>
+    <tbody>${rowsHtml || '<tr><td colspan="4" class="soft">Brak wybranych pozycji</td></tr>'}</tbody>
+  </table>
+  <div class="sum">
+    <div><b>Suma dotacji:</b> ${fmtPL(s.grantCapped)} zł</div>
+    <div><b>Suma dopłaty klienta:</b> ${fmtPL( (s.sumCopay||0) + (s.over||0) )} zł</div>
+  </div>
+  <div class="signs">
+    <div class="sign">Podpis sprzedawcy</div>
+    <div class="sign">Podpis klienta</div>
+  </div>`;
+  return html;
+}
+
+/* ===== Wysyłka / udostępnianie ===== */
+async function shareHtml(filename, html){
+  const blob = new Blob([html], {type:'text/html'});
+  const file = new File([blob], filename, {type:'text/html'});
+
+  if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({title: filename, text:'Oferta ARKON – Czyste Powietrze 2025', files:[file]});
+      return;
+    }catch(e){ /* cancel */ }
+  }
+  // Fallback: pobierz + otwórz mailto
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  const subject=encodeURIComponent('Oferta ARKON – Czyste Powietrze 2025');
+  const body=encodeURIComponent('Dzień dobry,\n\nW załączeniu przesyłam ofertę (plik został pobrany na komputer). Proszę dołączyć pobrany plik do wiadomości.\n\nPozdrawiam,\nARKON');
+  window.location.href=`mailto:?subject=${subject}&body=${body}`;
+}
+
+/* ===== DRUK przyciski ===== */
+q('#btnPrintClient').addEventListener('click', ()=> doPrint('client'));
+q('#btnPrintSellerFull').addEventListener('click', ()=> doPrint('seller-full'));
+q('#btnPrintSellerShort').addEventListener('click', ()=> doPrint('seller-short'));
+q('#btnPrintSellerTech').addEventListener('click',  ()=> doPrint('seller-tech'));
+
+/* ===== WYŚLIJ e‑mailem (HTML) ===== */
+q('#btnSendClient').addEventListener('click', async()=>{
+  const html = composeOfferHTML({client:true});
+  await shareHtml('oferta_arkon_klient.html', html);
+});
+q('#btnSendFull').addEventListener('click', async()=>{
+  const html = composeOfferHTML({client:false});
+  await shareHtml('oferta_arkon_pelna.html', html);
+});
 
 /* ===== SAVE / LOAD / PRINT ===== */
 function saveAll(){
-  var data={
+  const data={
     typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiad:q('#swiadczenia').value,
-    pm:state.priceMode,
-    main: state.mainRows.map(function(r){ return {sel:r.sel, vIdx:r.vIdx, cost:r.costInput}; }),
-    env:  state.envRows.map(function(r){ return {sel:r.sel, m2:r.m2, ownRate:r.ownRate}; })
+    eu:q('#euDemand').value, pm:state.priceMode, vat:VAT, notes:q('#notes')?.value||'',
+    main: state.mainRows.map(r=>({sel:r.sel, vIdx:r.vIdx, cost:r.costInput})),
+    env:  state.envRows.map(r=>({sel:r.sel, m2:r.m2, ownRate:r.ownRate}))
   };
   localStorage.setItem('cp2025_arkon', JSON.stringify(data));
-  console.info('Zapisano stan kalkulatora.');
 }
 function loadAll(){
-  var raw=localStorage.getItem('cp2025_arkon'); if(!raw){ alert('Brak zapisu'); return; }
-  var d;
-  try{ d=JSON.parse(raw); }catch(e){ alert('Nieprawidłowy zapis.'); return; }
+  const raw=localStorage.getItem('cp2025_arkon'); if(!raw){ alert('Brak zapisu'); return; }
+  let d; try{ d=JSON.parse(raw); }catch(_){ alert('Nieprawidłowy zapis.'); return; }
   q('#typ').value=d.typ||''; q('#doch_mies').value=d.mies||''; q('#doch_roczny').value=d.roczny||''; q('#swiadczenia').value=d.swiad||'';
+  q('#euDemand').value=d.eu||'EU_ABOVE_140';
+  VAT = (typeof d.vat==='number')? d.vat : (Number(d.vat)||VAT);
+  q('#vatSel').value=String(VAT);
+  if (q('#notes')) q('#notes').value=d.notes||'';
   state.priceMode = d.pm==='BRUTTO' ? 'BRUTTO' : 'NETTO';
-  qa('input[name="pm"]').forEach(function(r){ r.checked=(r.value===state.priceMode); });
+  qa('input[name="pm"]').forEach(r=>{ r.checked=(r.value===state.priceMode); });
 
-  if (d.main && d.main.forEach) {
-    d.main.forEach(function(m,i){
-      var r=state.mainRows[i]; if(!r) return;
-      r.sel=!!m.sel; r.els.sel.checked=r.sel;
-      r.vIdx=Number(m.vIdx||0); r.els.selVar.value=String(r.vIdx);
-      r.costInput=toNum(m.cost); r.els.cost.value=r.costInput?String(r.costInput):'';
-      recalcMainRow(i);
-    });
-  }
-  if (d.env && d.env.forEach) {
-    d.env.forEach(function(e,i){
-      var r=state.envRows[i]; if(!r) return;
-      r.sel=!!e.sel; r.els.sel.checked=r.sel;
-      r.m2=toNum(e.m2); r.els.m2.value=r.m2?String(r.m2):'';
-      r.ownRate=toNum(e.ownRate); r.els.ownRate.value=r.ownRate?String(r.ownRate):'';
-      recalcEnvRow(i);
-    });
-  }
-
+  buildMain(); buildEnv(); // odbuduj tabele, potem wypełnij
+  d.main?.forEach((m,i)=>{ const r=state.mainRows[i]; if(!r) return; r.sel=!!m.sel; r.els.sel.checked=r.sel; r.vIdx=Number(m.vIdx||0); r.els.selVar.value=String(r.vIdx); r.costInput=toNum(m.cost); r.els.cost.value=r.costInput?String(r.costInput):''; recalcMainRow(i); });
+  d.env?.forEach((e,i)=>{ const r=state.envRows[i]; if(!r) return; r.sel=!!e.sel; r.els.sel.checked=r.sel; r.m2=toNum(e.m2); r.els.m2.value=r.m2?String(r.m2):''; r.ownRate=toNum(e.ownRate); r.els.ownRate.value=r.ownRate?String(r.ownRate):''; recalcEnvRow(i); });
   refreshLevel();
-  console.info('Wczytano stan kalkulatora.');
 }
-function printAll(){ window.print(); }
+const autosave=debounce(saveAll,250);
 
-/* ===== autosave helper ===== */
-var autosave = debounce(saveAll, 250);
-
-/* ===== init & UI events ===== */
+/* ===== init + UI ===== */
 function init(){
-  qa('.tab-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      qa('.tab-btn').forEach(function(b){ b.setAttribute('aria-selected','false'); });
-      btn.setAttribute('aria-selected','true');
-      var tab=btn.id==='tabbtn-main'?'main':'env';
+  // tabs
+  qa('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      qa('.tab-btn').forEach(b=>b.setAttribute('aria-selected','false')); btn.setAttribute('aria-selected','true');
+      const tab=btn.id==='tabbtn-main'?'main':'env';
       q('#tab-main').classList.toggle('hidden', tab!=='main');
       q('#tab-env').classList.toggle('hidden', tab!=='env');
     });
   });
+  buildMain(); buildEnv(); refreshLevel(); categoryLabelFromSelection();
 
-  buildMain(); buildEnv(); refreshLevel();
-
-  q('#btnPresetMain').addEventListener('click', presetMain);
-  q('#btnAutoNeedMain').addEventListener('click', autoNeedMain);
   q('#btnCSVMain').addEventListener('click', exportCSVMain);
-
-  q('#btnPresetEnv').addEventListener('click', presetEnv);
-  q('#btnAutoNeedEnv').addEventListener('click', autoNeedEnv);
   q('#btnCSVEnv').addEventListener('click', exportCSVEnv);
-
   q('#btnCSVAll').addEventListener('click', exportCSVAll);
   q('#btnSave').addEventListener('click', saveAll);
   q('#btnLoad').addEventListener('click', loadAll);
-  q('#btnPrint').addEventListener('click', printAll);
+
+  q('#btnAutoNeedMain').addEventListener('click', autoNeedMain);
+  q('#btnAutoNeedEnv').addEventListener('click', autoNeedEnv);
+  q('#btnPresetMain').addEventListener('click', presetMain);
+  q('#btnPresetEnv').addEventListener('click', presetEnv);
+  q('#btnPresetAll').addEventListener('click', presetAll);
 }
 init();
 </script>
