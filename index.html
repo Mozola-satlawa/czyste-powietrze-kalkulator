@@ -551,7 +551,7 @@
 
   function updateAggregates(){ renderTotals(); renderSummary(); }
   const debUpdateAggregates=debounce(updateAggregates,160);
-  function recomputeAllRows(){ state.mainRows.forEach((,i)=>recalcMainRow(i)); state.envRows.forEach((,i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
+  function recomputeAllRows(){ state.mainRows.forEach((r,i)=>recalcMainRow(i)); state.envRows.forEach((r,i)=>recalcEnvRow(i)); categoryLabelFromSelection(); }
 
   /* auto / preset */
   function autoNeedMain(){
@@ -590,7 +590,7 @@
     const csv = rows.map(r => r.map(csvEscape).join(';')).join('\\n');
     const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = name.endsWith('.csv') ? name : \\${name}.csv\; a.click(); URL.revokeObjectURL(a.href);
+    a.download = name.endsWith('.csv') ? name : `${name}.csv`; a.click(); URL.revokeObjectURL(a.href);
   }
   function exportCSVMain(){
     const out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata']];
@@ -621,7 +621,7 @@
     });
     state.envRows.forEach((r,i)=>{
       const base=DATA_ENV[i], cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
-      out.push(['Ocieplenie', base.name, \\${r.m2||0} m2 x \${r.ownRate||0}\, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
+      out.push(['Ocieplenie', base.name, `${r.m2||0} m2 x ${r.ownRate||0}`, Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0)]);
     });
     out.push([]); out.push(['PODSUMOWANIE','','','', 'Limit pakietu', capProg||'—', 'Nadwyżka ponad limit', overCap]);
     downloadCSV('cp2025_laczny', out);
@@ -637,11 +637,11 @@
 
   /* Nagłówek dla klienta */
   let clientHdr;
-  function ensureClientHeader(){
+  function ensureClientHeader(){}
     if (clientHdr) return;
     clientHdr = document.createElement('div');
     clientHdr.className='panel';
-    clientHdr.innerHTML = \`
+    clientHdr.innerHTML = `
       <div class="client-header">
         <div class="logo" aria-hidden="true">
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
