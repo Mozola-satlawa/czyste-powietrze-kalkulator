@@ -4,15 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kalkulator Czyste Powietrze – ARKON</title>
-<meta name="description" content="Kalkulator dotacji Czyste Powietrze 2025: źródło ciepła, ocieplenie, stolarka, limity dotacji na m2, VAT 8%, zapis, CSV, druk.">
+<meta name="description" content="Kalkulator dotacji Czyste Powietrze 2025: źródło ciepła, ocieplenie, stolarka, limity dotacji na m2, VAT 8/23%, zapis, CSV, druk.">
 <style>
   :root{ --bg:#0b1020; --p1:#121a34; --p2:#172142; --ink:#e8edff; --muted:#aeb8da; --accent:#4cc9f0; --ok:#2b8a57; --grid:#243059; }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{ margin:0;background:linear-gradient(180deg,#0a0f1e,#0c1230 60%,#0a0f1e); color:var(--ink); font:16px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif; }
-  .wrap{max-width:1200px;margin:auto;padding:24px 16px 90px}
+  .wrap{max-width:1200px;margin:auto;padding:24px 16px 120px}
   header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
-  .logo{width:54px;height:54px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1f2a55;color:var(--accent);font:800 15px/1 system-ui}
+  .logo{width:64px;height:64px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1f2a55}
+  .logo svg{width:48px;height:48px}
   h1{font-size:22px;margin:0}
   .muted{color:var(--muted);font-size:13px}
   .panel{background:linear-gradient(180deg,var(--p1),var(--p2));border:1px solid #1c2750;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 10px 30px #0006}
@@ -38,27 +39,49 @@
   [aria-live="polite"]{outline:none}
   .cap-badge{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid #ff7b7b;border-radius:999px;font-size:11px;color:#ffdada;background:#3a0e14}
   .dim{opacity:.6}
+
+  /* Footer (ekran + druk) */
+  .site-footer{max-width:1200px;margin:16px auto 24px; color:#a9b6e6}
+  .site-footer .inner{display:flex;gap:16px;align-items:center;padding:12px 16px;border:1px solid #1c2750;border-radius:12px;background:linear-gradient(180deg,#0e1740,#0f1a4a)}
+  .site-footer .f-logo{width:42px;height:42px;border-radius:10px;background:#0e1538;border:1px solid #1f2a55;display:grid;place-items:center}
+  .site-footer .f-logo svg{width:30px;height:30px}
+  .site-footer .f-text{font-size:13px;line-height:1.35}
+  .site-footer .f-text b{color:#dfe6ff}
+
+  /* Sekcja podpisów – pokazywana tylko w druku */
+  .print-signs{display:none}
   @media print{
     body{background:#fff;color:#000}
     .tabs,.right button,.tab-btn,.login-overlay{display:none!important}
     .panel{box-shadow:none;border:1px solid #bbb;background:#fff}
     .logo{border:0;box-shadow:none}
     .cap-badge{border-color:#000;color:#000}
+    .site-footer{color:#000}
+    .site-footer .inner{background:#fff;border-color:#bbb}
+    .print-signs{display:block}
   }
+
   /* login */
   .login-overlay{position:fixed;inset:0;background:radial-gradient(120% 120% at 20% 20%,#0c1230,#080c1e);display:grid;place-items:center;z-index:9999}
   .login-box{width:min(520px,92vw);background:#10183a;border:1px solid #263166;border-radius:14px;padding:22px;box-shadow:0 16px 48px #000b}
   .login-title{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .login-title .logo{width:48px;height:48px}
+  .login-title .logo{width:56px;height:56px}
   .login-grid{display:grid;gap:10px;margin-top:10px}
 </style>
 </head>
 <body>
-<!-- LOGIN -->
+<!-- LOGIN (zostaje jak było) -->
 <div id="login" class="login-overlay" aria-modal="true" role="dialog" aria-labelledby="loginTitle">
   <div class="login-box">
     <div class="login-title">
-      <div class="logo" aria-hidden="true">ARKON</div>
+      <div class="logo" aria-hidden="true">
+        <!-- SVG LOGO -->
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="120" height="120" rx="18" fill="#0e1538"/>
+          <path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text>
+        </svg>
+      </div>
       <div>
         <div id="loginTitle" style="font-weight:800">Panel dostępu • Arkon</div>
         <div class="muted">Wpisz nazwę i hasło, aby otworzyć kalkulator.</div>
@@ -83,10 +106,17 @@
 
 <div class="wrap" id="app" style="filter:blur(4px);pointer-events:none">
   <header>
-    <div class="logo" aria-hidden="true">ARKON</div>
+    <div class="logo" aria-hidden="true">
+      <!-- SVG LOGO -->
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="120" height="120" rx="18" fill="#0e1538"/>
+        <path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text>
+      </svg>
+    </div>
     <div>
       <h1>Kalkulator dotacji • Czyste Powietrze 2025</h1>
-      <div class="muted">Źródło ciepła + ocieplenie/stolarka. Jedno źródło ciepła, limity m2, VAT 8%, zapis/CSV/druk.</div>
+      <div class="muted">Źródło ciepła + ocieplenie/stolarka. Jedno źródło ciepła, limity m², VAT <span id="vatLive">8</span>%, zapis/CSV/druk.</div>
     </div>
   </header>
 
@@ -119,8 +149,15 @@
         <span class="muted" style="display:block;margin-bottom:6px">Tryb cen, które wpisuję</span>
         <div class="pill" role="radiogroup" aria-label="Tryb cen">
           <label><input type="radio" name="pm" value="NETTO" checked> NETTO</label>
-          <label style="margin-left:10px"><input type="radio" name="pm" value="BRUTTO"> BRUTTO (VAT 8%)</label>
+          <label style="margin-left:10px"><input type="radio" name="pm" value="BRUTTO"> BRUTTO (VAT <span id="vatRadio">8</span>%)</label>
         </div>
+      </div>
+      <div>
+        <label for="vatSel">VAT (dla kwot BRUTTO)</label>
+        <select id="vatSel">
+          <option value="0.08" selected>8% (mieszkaniowe)</option>
+          <option value="0.23">23% (inne)</option>
+        </select>
       </div>
       <div class="pill">Poziom: <b id="poziom">—</b></div>
       <div class="pill">Procent: <b id="procent">—</b></div>
@@ -187,7 +224,7 @@
   <!-- OCIEPLENIE / STOLARKA -->
   <section id="tab-env" class="hidden" role="tabpanel" aria-labelledby="tabbtn-env">
     <section class="panel">
-      <div class="muted">Dotacja = min( koszt NETTO × % , pow_m2 × stawka_dotacji_netto_na_m2 ). Ceny brutto liczone z VAT 8%.</div>
+      <div class="muted">Dotacja = min( koszt NETTO × % , pow_m2 × stawka_dotacji_netto_na_m2 ). Ceny brutto liczone z VAT <span id="vatLive2">8</span>%.</div>
     </section>
     <section class="panel">
       <div class="right" style="margin-bottom:6px">
@@ -226,6 +263,32 @@
   </section>
 </div>
 
+<!-- STOPKA (ekran + druk) -->
+<footer class="site-footer" aria-label="Dane firmy">
+  <div class="inner">
+    <div class="f-logo" aria-hidden="true">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="120" height="120" rx="18" fill="#0e1538"/>
+        <path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text>
+      </svg>
+    </div>
+    <div class="f-text">
+      <b>ARKON – Przedsiębiorstwo Wielobranżowe</b><br>
+      59‑170 Przemków • ul. Fabryczna 12 C • NIP: 5020038830 • KRS: 0000255361<br>
+      tel. 76 831 90 30 • e‑mail: biuro@arkon.com.pl
+    </div>
+  </div>
+</footer>
+
+<!-- PODPISY – tylko w wydruku -->
+<div class="print-signs" style="max-width:1200px;margin:24px auto 40px;padding:0 16px">
+  <div style="display:flex;gap:40px;margin-top:24px">
+    <div style="flex:1;border-top:1px solid #333;padding-top:6px;text-align:center;font-size:12px">Podpis klienta</div>
+    <div style="flex:1;border-top:1px solid #333;padding-top:6px;text-align:center;font-size:12px">Podpis przedstawiciela ARKON</div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -240,8 +303,20 @@ function toNum(v){
   var n = parseFloat(s); return isFinite(n) ? n : 0;
 }
 function debounce(fn,ms){ var t; ms=ms||180; return function(){ var a=arguments; clearTimeout(t); t=setTimeout(function(){ fn.apply(null,a); },ms); }; }
-var VAT = 0.08;
 function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+/* ===== VAT – przełączanie 8%/23% ===== */
+var VAT = 0.08;
+function setVAT(v){
+  VAT = Number(v) || 0.08;
+  q('#vatLive').textContent = Math.round(VAT*100);
+  q('#vatLive2').textContent = Math.round(VAT*100);
+  q('#vatRadio').textContent = Math.round(VAT*100);
+  recomputeAllRows();
+  updateAggregates();
+  autosave();
+}
+q('#vatSel').addEventListener('change', function(){ setVAT(this.value); });
 
 /* Główna formuła: limit + VAT + dopłata */
 function calcGrant(net, pct, limit){
@@ -309,7 +384,7 @@ var DATA_MAIN = [
     {label:'powietrze/woda – wyższa klasa', lim:{P:14080,M:24640,T:35200}},
     {label:'powietrze/powietrze',           lim:{P: 4480,M: 7840,T:11200}},
     {label:'gruntowa – wyższa klasa',       lim:{P:18000,M:31500,T:45000}},
-    {label:'dolne źródło (odwierty)',       lim:{P: 8200,M:14350,T:20500}}
+    {label:'dolne źródło (odwierty)',       lim:{P: 8000,M:14000,T:20000}}
   ]},
   {id:'SIEC',name:'Podłączenie do sieci ciepłowniczej (z przyłączem)', heat:true, variants:[
     {label:'standard', lim:{P:9800,M:15575,T:22250}}
@@ -328,7 +403,7 @@ var DATA_MAIN = [
   ]},
   {id:'AUD', name:'Audyt energetyczny', heat:false, variants:[{label:'standard', lim:{P:480,M:840,T:1200}}]},
   {id:'SCH', name:'Świadectwo charakterystyki', heat:false, variants:[{label:'standard', lim:{P:160,M:280,T:400}}]},
-  {id:'REC', name:'Rekuperacja (zestaw)', heat:false, variants:[{label:'zestaw', lim:{P:6800,M:11690,T:16700}}]}
+  {id:'REC', name:'Rekuperacja (zestaw)', heat:false, variants:[{label:'zestaw', lim:{P:6680,M:11690,T:16700}}]}
 ];
 function limActive(lim){
   if (state.level.name==='PODSTAWOWY') return lim.P || 0;
@@ -629,7 +704,7 @@ function downloadCSV(name, rows){
   URL.revokeObjectURL(a.href);
 }
 function exportCSVMain(){
-  var out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (8% VAT)','Dopłata','Limit użyty?']];
+  var out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata','Limit użyty?']];
   state.mainRows.forEach(function(r){
     var comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
     out.push([ r.sel?'TAK':'NIE', comp.name, v.label, Math.round(r._costNet||0), lim, r.sel?(r._need||''):'', Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE' ]);
@@ -637,7 +712,7 @@ function exportCSVMain(){
   downloadCSV('cp2025_glowne_'+todayStr(), out);
 }
 function exportCSVEnv(){
-  var out=[['Wybrany','Pozycja','Pow m2 x cena_m2','Koszt netto','Limit z m2','Dotacja','Koszt brutto (8% VAT)','Dopłata','Limit użyty?']];
+  var out=[['Wybrany','Pozycja','Pow m2 x cena_m2','Koszt netto','Limit z m2','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata','Limit użyty?']];
   state.envRows.forEach(function(r,i){
     var base=DATA_ENV[i]; var cap=Math.round((r.m2||0)*(rateForKey(r.key)||0));
     out.push([ r.sel?'TAK':'NIE', base.name, String(r.m2||0)+' m2 x '+String(r.ownRate||0), Math.round(r.costNet||0), cap, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE' ]);
@@ -645,7 +720,7 @@ function exportCSVEnv(){
   downloadCSV('cp2025_ocieplenie_'+todayStr(), out);
 }
 function exportCSVAll(){
-  var out=[['Sekcja','Nazwa','Opis','Koszt netto','Limit (aktywny)','Dotacja','Koszt brutto (8% VAT)','Dopłata','Limit użyty?']];
+  var out=[['Sekcja','Nazwa','Opis','Koszt netto','Limit (aktywny)','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata','Limit użyty?']];
   state.mainRows.forEach(function(r){
     var comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
     out.push(['Glowne', comp.name, v.label, Math.round(r._costNet||0), lim, Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE']);
@@ -661,12 +736,11 @@ function exportCSVAll(){
 function saveAll(){
   var data={
     typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiad:q('#swiadczenia').value,
-    pm:state.priceMode,
+    pm:state.priceMode, vat:VAT,
     main: state.mainRows.map(function(r){ return {sel:r.sel, vIdx:r.vIdx, cost:r.costInput}; }),
     env:  state.envRows.map(function(r){ return {sel:r.sel, m2:r.m2, ownRate:r.ownRate}; })
   };
   localStorage.setItem('cp2025_arkon', JSON.stringify(data));
-  console.info('Zapisano stan kalkulatora.');
 }
 function loadAll(){
   var raw=localStorage.getItem('cp2025_arkon'); if(!raw){ alert('Brak zapisu'); return; }
@@ -675,6 +749,9 @@ function loadAll(){
   q('#typ').value=d.typ||''; q('#doch_mies').value=d.mies||''; q('#doch_roczny').value=d.roczny||''; q('#swiadczenia').value=d.swiad||'';
   state.priceMode = d.pm==='BRUTTO' ? 'BRUTTO' : 'NETTO';
   qa('input[name="pm"]').forEach(function(r){ r.checked=(r.value===state.priceMode); });
+
+  // odtwórz VAT (jeśli zapisany)
+  if (typeof d.vat!=='undefined'){ setVAT(d.vat); q('#vatSel').value=String(d.vat); }
 
   if (d.main && d.main.forEach) {
     d.main.forEach(function(m,i){
@@ -696,7 +773,6 @@ function loadAll(){
   }
 
   refreshLevel();
-  console.info('Wczytano stan kalkulatora.');
 }
 function printAll(){ window.print(); }
 
@@ -705,6 +781,9 @@ var autosave = debounce(saveAll, 250);
 
 /* ===== init & UI events ===== */
 function init(){
+  // ustaw VAT label na starcie
+  setVAT(q('#vatSel').value);
+
   qa('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       qa('.tab-btn').forEach(function(b){ b.setAttribute('aria-selected','false'); });
