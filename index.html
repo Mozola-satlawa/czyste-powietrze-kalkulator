@@ -14,6 +14,9 @@
   header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
   .logo{width:64px;height:64px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1f2a55}
   .logo svg{width:48px;height:48px}
+  /* nowy: wariant z obrazkiem */
+  .logo img,.site-footer .f-logo img{width:100%;height:100%;object-fit:contain;display:block}
+
   h1{font-size:22px;margin:0}
   .muted{color:var(--muted);font-size:13px}
   .panel{background:linear-gradient(180deg,var(--p1),var(--p2));border:1px solid #1c2750;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 10px 30px #0006}
@@ -28,8 +31,8 @@
   button.ghost{background:transparent;border:1px dashed #3a4ca3}
   button.ok{background:#194d34;border-color:var(--ok)}
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-  .tab-btn{background:#233261;border:1px solid #3a4ca3;border-radius:999px;padding:10px 14px}
   .tab-btn[aria-selected="true"]{background:#1b2550;border-color:#67a1ff;box-shadow:0 0 0 2px #67a1ff44}
+  .tab-btn{background:#233261;border:1px solid #3a4ca3;border-radius:999px;padding:10px 14px}
   .pill{display:inline-block;background:#0d1530;border:1px dashed #2b3a77;border-radius:999px;padding:8px 10px;margin:4px 8px 0 0;font-size:13px;color:var(--muted)}
   .right{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .hidden{display:none}
@@ -48,8 +51,7 @@
   .site-footer .f-text{font-size:13px;line-height:1.35}
   .site-footer .f-text b{color:#dfe6ff}
 
-  /* Sekcja podpisów – pokazywana tylko w druku */
-  .print-signs{display:none}
+  /* DRUK: uproszczenie – ukryj niezaznaczone wiersze */
   @media print{
     body{background:#fff;color:#000}
     .tabs,.right button,.tab-btn,.login-overlay{display:none!important}
@@ -59,6 +61,8 @@
     .site-footer{color:#000}
     .site-footer .inner{background:#fff;border-color:#bbb}
     .print-signs{display:block}
+    /* tu magia: tylko zaznaczone lecą na papier */
+    #tbodyMain > tr[data-sel="0"], #tbodyEnv > tr[data-sel="0"]{display:none}
   }
 
   /* login */
@@ -70,17 +74,12 @@
 </style>
 </head>
 <body>
-<!-- LOGIN (zostaje jak było) -->
+<!-- LOGIN (zostaje jak było, logo jako obrazek) -->
 <div id="login" class="login-overlay" aria-modal="true" role="dialog" aria-labelledby="loginTitle">
   <div class="login-box">
     <div class="login-title">
       <div class="logo" aria-hidden="true">
-        <!-- SVG LOGO -->
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect width="120" height="120" rx="18" fill="#0e1538"/>
-          <path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text>
-        </svg>
+        <img src="arkon-logo.png" alt="ARKON — logo" loading="eager" decoding="async">
       </div>
       <div>
         <div id="loginTitle" style="font-weight:800">Panel dostępu • Arkon</div>
@@ -107,12 +106,7 @@
 <div class="wrap" id="app" style="filter:blur(4px);pointer-events:none">
   <header>
     <div class="logo" aria-hidden="true">
-      <!-- SVG LOGO -->
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="120" height="120" rx="18" fill="#0e1538"/>
-        <path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text>
-      </svg>
+      <img src="arkon-logo.png" alt="ARKON — logo" loading="eager" decoding="async">
     </div>
     <div>
       <h1>Kalkulator dotacji • Czyste Powietrze 2025</h1>
@@ -173,6 +167,9 @@
       <span class="pill">Suma dotacji: <b id="sumGrantAll">0</b> zł</span>
       <span class="pill">Min. wymagany wydatek (netto): <b id="sumNeedAll">—</b> zł</span>
       <span class="pill">Suma dopłaty (brutto): <b id="sumCopayAll">0</b> zł</span>
+      <!-- nowość: komunikaty limitu globalnego -->
+      <span class="pill" id="pillGlobalCap" style="display:none">Limit globalny: <b id="globalCap">—</b> zł</span>
+      <span class="pill" id="pillGlobalHit" style="display:none">Po limicie: <b id="globalGrant">—</b> zł</span>
     </div>
     <div class="right" style="margin-top:10px">
       <button id="btnSave" class="ghost" type="button">Zapisz</button>
@@ -202,6 +199,8 @@
               <th scope="col" class="num">Koszt (Twoja kwota)</th>
               <th scope="col" class="num">Limit (aktywny)</th>
               <th scope="col" class="num">Min. wydatek (netto)</th>
+              <!-- nowość -->
+              <th scope="col" class="num">Min. wydatek (brutto)</th>
               <th scope="col" class="num">Dotacja</th>
               <th scope="col" class="num">Koszt brutto</th>
               <th scope="col" class="num">Dopłata (brutto)</th>
@@ -210,7 +209,7 @@
           <tbody id="tbodyMain"></tbody>
           <tfoot>
             <tr>
-              <td colspan="5" class="num"><b>SUMA (główne)</b></td>
+              <td colspan="6" class="num"><b>SUMA (główne)</b></td>
               <td class="num" id="sumMain">0</td>
               <td class="num" id="sumMainGross">0</td>
               <td class="num" id="sumMainCopay">0</td>
@@ -267,11 +266,7 @@
 <footer class="site-footer" aria-label="Dane firmy">
   <div class="inner">
     <div class="f-logo" aria-hidden="true">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <rect width="120" height="120" rx="18" fill="#0e1538"/>
-        <path d="M18 78 L60 22 L102 78" stroke="#4cc9f0" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <text x="60" y="96" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,Arial" font-size="28" font-weight="800" fill="#4cc9f0">ARKON</text>
-      </svg>
+      <img src="arkon-logo.png" alt="" loading="lazy" decoding="async">
     </div>
     <div class="f-text">
       <b>ARKON – Przedsiębiorstwo Wielobranżowe</b><br>
@@ -401,6 +396,10 @@ var DATA_MAIN = [
   {id:'INST',name:'Instalacja CO + CWU', heat:false, variants:[
     {label:'standard', lim:{P:8200,M:14350,T:20500}}
   ]},
+  /* NOWOŚĆ: płukanie instalacji – bez limitu pozycyjnego (ogranicza tylko % i limit globalny) */
+  {id:'PLUK',name:'Płukanie instalacji', heat:false, variants:[
+    {label:'usługa', lim:{P:999999,M:999999,T:999999}}
+  ]},
   {id:'AUD', name:'Audyt energetyczny', heat:false, variants:[{label:'standard', lim:{P:480,M:840,T:1200}}]},
   {id:'SCH', name:'Świadectwo charakterystyki', heat:false, variants:[{label:'standard', lim:{P:160,M:280,T:400}}]},
   {id:'REC', name:'Rekuperacja (zestaw)', heat:false, variants:[{label:'zestaw', lim:{P:6680,M:11690,T:16700}}]}
@@ -414,8 +413,8 @@ function limActive(lim){
 function buildMain(){
   var tb=q('#tbodyMain'); tb.innerHTML=''; state.mainRows=[];
   DATA_MAIN.forEach(function(comp, idx){
-    var tr=document.createElement('tr');
-    var row={compIdx:idx, heat:comp.heat, sel:false, vIdx:0, costInput:0, _costNet:0,_grant:0,_gross:0,_copay:0,_need:0, els:{}};
+    var tr=document.createElement('tr'); tr.setAttribute('data-sel','0'); // do druku
+    var row={compIdx:idx, heat:comp.heat, sel:false, vIdx:0, costInput:0, _costNet:0,_grant:0,_gross:0,_copay:0,_need:0,_needGross:0, els:{}};
 
     var tdSel=document.createElement('td'); var sel=document.createElement('input'); sel.type='checkbox'; sel.setAttribute('aria-label','Wybierz wiersz'); tdSel.appendChild(sel);
     var tdName=document.createElement('td');
@@ -429,20 +428,23 @@ function buildMain(){
 
     var tdLim=document.createElement('td'); tdLim.className='num';
     var tdNeed=document.createElement('td'); tdNeed.className='num';
+    /* NOWOŚĆ: min. wydatek brutto */
+    var tdNeedG=document.createElement('td'); tdNeedG.className='num';
+
     var tdGrant=document.createElement('td'); tdGrant.className='num';
     var tdGross=document.createElement('td'); tdGross.className='num';
     var tdCopay=document.createElement('td'); tdCopay.className='num';
 
-    tr.appendChild(tdSel); tr.appendChild(tdName); tr.appendChild(tdCost); tr.appendChild(tdLim); tr.appendChild(tdNeed); tr.appendChild(tdGrant); tr.appendChild(tdGross); tr.appendChild(tdCopay);
+    tr.appendChild(tdSel); tr.appendChild(tdName); tr.appendChild(tdCost); tr.appendChild(tdLim); tr.appendChild(tdNeed); tr.appendChild(tdNeedG); tr.appendChild(tdGrant); tr.appendChild(tdGross); tr.appendChild(tdCopay);
     tb.appendChild(tr);
 
-    row.els={sel:sel,selVar:selVar,cost:cost,tdLim:tdLim,tdNeed:tdNeed,tdGrant:tdGrant,tdGross:tdGross,tdCopay:tdCopay};
+    row.els={tr:tr,sel:sel,selVar:selVar,cost:cost,tdLim:tdLim,tdNeed:tdNeed,tdNeedG:tdNeedG,tdGrant:tdGrant,tdGross:tdGross,tdCopay:tdCopay};
     state.mainRows.push(row);
 
     sel.addEventListener('change', function(){
-      row.sel=sel.checked;
+      row.sel=sel.checked; row.els.tr.setAttribute('data-sel', row.sel?'1':'0');
       if (row.sel && comp.heat){
-        state.mainRows.forEach(function(r,j){ if(j!==idx && DATA_MAIN[r.compIdx].heat){ r.sel=false; r.els.sel.checked=false; recalcMainRow(j); } });
+        state.mainRows.forEach(function(r,j){ if(j!==idx && DATA_MAIN[r.compIdx].heat){ r.sel=false; r.els.sel.checked=false; r.els.tr.setAttribute('data-sel','0'); recalcMainRow(j); } });
       }
       recalcMainRow(idx);
       updateAggregates();
@@ -490,7 +492,7 @@ var DATA_ENV = [
 function buildEnv(){
   var tb=q('#tbodyEnv'); tb.innerHTML=''; state.envRows=[];
   DATA_ENV.forEach(function(it,idx){
-    var tr=document.createElement('tr');
+    var tr=document.createElement('tr'); tr.setAttribute('data-sel','0'); // do druku
     var r={ key:it.key, sel:false, m2:0, ownRate:0, costNet:0, _grant:0,_gross:0,_copay:0,_hit:false, els:{} };
 
     var tdSel=document.createElement('td'); var sel=document.createElement('input'); sel.type='checkbox'; sel.setAttribute('aria-label','Wybierz pozycję'); tdSel.appendChild(sel);
@@ -509,11 +511,11 @@ function buildEnv(){
     tr.appendChild(tdSel); tr.appendChild(tdName); tr.appendChild(tdM2); tr.appendChild(tdOwn); tr.appendChild(tdRate); tr.appendChild(tdCost); tr.appendChild(tdCap); tr.appendChild(tdGrant); tr.appendChild(tdGross); tr.appendChild(tdCopay);
     tb.appendChild(tr);
 
-    r.els={sel:sel,m2:m2,ownRate:own,tdRateMax:tdRate,tdCostNet:tdCost,tdLimit:tdCap,tdGrant:tdGrant,tdGross:tdGross,tdCopay:tdCopay};
+    r.els={tr:tr,sel:sel,m2:m2,ownRate:own,tdRateMax:tdRate,tdCostNet:tdCost,tdLimit:tdCap,tdGrant:tdGrant,tdGross:tdGross,tdCopay:tdCopay};
     state.envRows.push(r);
 
     sel.addEventListener('change', function(){
-      r.sel=sel.checked;
+      r.sel=sel.checked; r.els.tr.setAttribute('data-sel', r.sel?'1':'0');
       recalcEnvRow(idx);
       updateAggregates();
       autosave();
@@ -546,17 +548,20 @@ function recalcMainRow(i){
 
   var net = state.priceMode==='BRUTTO' ? (r.costInput/(1+VAT)) : r.costInput;
   var need  = state.level.pct>0 ? Math.ceil(lim/state.level.pct) : 0;
+  var needGross = need ? need*(1+VAT) : 0;
 
   var res = calcGrant(net, state.level.pct, lim);
-  r._costNet=net; r._grant=res.grant; r._gross=res.gross; r._copay=res.copay; r._need=need; r._hit=res.hit;
+  r._costNet=net; r._grant=res.grant; r._gross=res.gross; r._copay=res.copay; r._need=need; r._needGross=needGross; r._hit=res.hit;
 
   if (!r.sel){
     r.els.tdNeed.textContent = '—';
+    r.els.tdNeedG.textContent = '—';
     r.els.tdGrant.innerHTML = '—';
     r.els.tdGross.textContent = '—';
     r.els.tdCopay.textContent = '—';
   } else {
     r.els.tdNeed.textContent = need?fmt(need):'—';
+    r.els.tdNeedG.textContent = needGross?fmt(needGross):'—';
     setGrantCell(r.els.tdGrant, res.grant, res.hit);
     r.els.tdGross.textContent = fmt(res.gross);
     r.els.tdCopay.textContent = fmt(res.copay);
@@ -600,6 +605,34 @@ function getTotalsEnv(){
   state.envRows.forEach(function(r){ if(r.sel){ sumGrant+=r._grant||0; sumGross+=r._gross||0; sumCopay+=r._copay||0; countSel++; } });
   return {sumGrant:sumGrant,sumGross:sumGross,sumCopay:sumCopay,countSel:countSel};
 }
+
+/* ===== limit globalny ===== */
+function detectHeatType(){
+  // zwraca: 'PC_AW' (powietrze/woda), 'PC_GR' (gruntowa), 'OTHER' (kotły/elektryczne/sieć), albo null
+  var type=null;
+  state.mainRows.forEach(function(r){
+    if(r.sel && DATA_MAIN[r.compIdx].heat){
+      var comp=DATA_MAIN[r.compIdx];
+      if(comp.id==='PC'){
+        var label=(comp.variants[r.vIdx]||{}).label||'';
+        if(/gruntowa/i.test(label)) type='PC_GR';
+        else if(/powietrze\/woda/i.test(label)) type='PC_AW';
+        else type='PC_AW'; // bezpieczne domyślne dla PC
+      }else{
+        type='OTHER';
+      }
+    }
+  });
+  return type;
+}
+function getGlobalCap(){
+  var ht=detectHeatType();
+  if(ht==='PC_GR') return 170000;
+  if(ht==='PC_AW') return 140100;
+  if(ht==='OTHER') return 125600;
+  return null;
+}
+
 function renderTotals(){
   var m=getTotalsMain(), e=getTotalsEnv();
   q('#sumMain').textContent=fmt(m.sumGrant);
@@ -614,9 +647,17 @@ function renderTotals(){
 }
 function renderSummary(){
   var m=getTotalsMain(), e=getTotalsEnv();
-  var sumGrant=(m.sumGrant||0)+(e.sumGrant||0);
-  var sumCopay=(m.sumCopay||0)+(e.sumCopay||0);
+  var rawGrant=(m.sumGrant||0)+(e.sumGrant||0);
+  var totalGross=(m.sumGross||0)+(e.sumGross||0);
 
+  // globalny limit
+  var cap=getGlobalCap();
+  var finalGrant = cap ? Math.min(rawGrant, cap) : rawGrant;
+  var capHit = cap ? (rawGrant>cap+1e-9) : false;
+
+  var finalCopay = Math.max(0, totalGross - finalGrant);
+
+  // suma potrzeb netto (pozycje zaznaczone)
   var need=0;
   state.mainRows.forEach(function(r){
     if(r.sel && state.level.pct>0){
@@ -626,14 +667,27 @@ function renderSummary(){
   });
   state.envRows.forEach(function(r){
     if(r.sel && state.level.pct>0){
-      var cap = (r.m2||0) * (rateForKey(r.key)||0);
-      need += Math.ceil(cap/state.level.pct);
+      var capR = (r.m2||0) * (rateForKey(r.key)||0);
+      need += Math.ceil(capR/state.level.pct);
     }
   });
 
-  q('#sumGrantAll').textContent=fmt(sumGrant);
-  q('#sumCopayAll').textContent=fmt(sumCopay);
+  // wyświetlenie
+  q('#sumGrantAll').textContent=fmt(finalGrant);
+  q('#sumCopayAll').textContent=fmt(finalCopay);
   q('#sumNeedAll').textContent=state.level.pct?fmt(need):'—';
+
+  // pille informujące o limicie globalnym
+  var pillCap=q('#pillGlobalCap'), pillHit=q('#pillGlobalHit');
+  if(cap){
+    q('#globalCap').textContent=fmt(cap);
+    q('#globalGrant').textContent=fmt(finalGrant);
+    pillCap.style.display='inline-block';
+    pillHit.style.display=capHit?'inline-block':'none';
+  }else{
+    pillCap.style.display='none';
+    pillHit.style.display='none';
+  }
 }
 function updateAggregates(){ renderTotals(); renderSummary(); }
 var debUpdateAggregates = debounce(updateAggregates, 160);
@@ -647,7 +701,8 @@ function recomputeAllRows(){
 /* ===== preset / auto ===== */
 function presetMain(){
   state.mainRows.forEach(function(r,i){
-    r.sel=false; r.els.sel.checked=false; r.vIdx=0; r.els.selVar.value='0';
+    r.sel=false; r.els.sel.checked=false; r.els.tr.setAttribute('data-sel','0');
+    r.vIdx=0; r.els.selVar.value='0';
     r.costInput=0; r.els.cost.value='';
     recalcMainRow(i);
   });
@@ -656,7 +711,8 @@ function presetMain(){
 }
 function presetEnv(){
   state.envRows.forEach(function(r,i){
-    r.sel=false; r.els.sel.checked=false; r.m2=0; r.els.m2.value='';
+    r.sel=false; r.els.sel.checked=false; r.els.tr.setAttribute('data-sel','0');
+    r.m2=0; r.els.m2.value='';
     r.ownRate=0; r.els.ownRate.value='';
     recalcEnvRow(i);
   });
@@ -704,10 +760,10 @@ function downloadCSV(name, rows){
   URL.revokeObjectURL(a.href);
 }
 function exportCSVMain(){
-  var out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata','Limit użyty?']];
+  var out=[['Wybrany','Komponent','Wariant','Koszt netto','Limit (aktywny)','Min. wydatek netto','Min. wydatek brutto','Dotacja','Koszt brutto (VAT '+Math.round(VAT*100)+'%)','Dopłata','Limit użyty?']];
   state.mainRows.forEach(function(r){
     var comp=DATA_MAIN[r.compIdx], v=comp.variants[r.vIdx], lim=limActive(v.lim);
-    out.push([ r.sel?'TAK':'NIE', comp.name, v.label, Math.round(r._costNet||0), lim, r.sel?(r._need||''):'', Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE' ]);
+    out.push([ r.sel?'TAK':'NIE', comp.name, v.label, Math.round(r._costNet||0), lim, r.sel?(r._need||''):'', r.sel?(Math.round(r._needGross||0)):'', Math.round(r._grant||0), Math.round(r._gross||0), Math.round(r._copay||0), r._hit?'TAK':'NIE' ]);
   });
   downloadCSV('cp2025_glowne_'+todayStr(), out);
 }
@@ -750,13 +806,12 @@ function loadAll(){
   state.priceMode = d.pm==='BRUTTO' ? 'BRUTTO' : 'NETTO';
   qa('input[name="pm"]').forEach(function(r){ r.checked=(r.value===state.priceMode); });
 
-  // odtwórz VAT (jeśli zapisany)
   if (typeof d.vat!=='undefined'){ setVAT(d.vat); q('#vatSel').value=String(d.vat); }
 
   if (d.main && d.main.forEach) {
     d.main.forEach(function(m,i){
       var r=state.mainRows[i]; if(!r) return;
-      r.sel=!!m.sel; r.els.sel.checked=r.sel;
+      r.sel=!!m.sel; r.els.sel.checked=r.sel; r.els.tr.setAttribute('data-sel', r.sel?'1':'0');
       r.vIdx=Number(m.vIdx||0); r.els.selVar.value=String(r.vIdx);
       r.costInput=toNum(m.cost); r.els.cost.value=r.costInput?String(r.costInput):'';
       recalcMainRow(i);
@@ -765,7 +820,7 @@ function loadAll(){
   if (d.env && d.env.forEach) {
     d.env.forEach(function(e,i){
       var r=state.envRows[i]; if(!r) return;
-      r.sel=!!e.sel; r.els.sel.checked=r.sel;
+      r.sel=!!e.sel; r.els.sel.checked=r.sel; r.els.tr.setAttribute('data-sel', r.sel?'1':'0');
       r.m2=toNum(e.m2); r.els.m2.value=r.m2?String(r.m2):'';
       r.ownRate=toNum(e.ownRate); r.els.ownRate.value=r.ownRate?String(r.ownRate):'';
       recalcEnvRow(i);
@@ -781,7 +836,6 @@ var autosave = debounce(saveAll, 250);
 
 /* ===== init & UI events ===== */
 function init(){
-  // ustaw VAT label na starcie
   setVAT(q('#vatSel').value);
 
   qa('.tab-btn').forEach(function(btn){
