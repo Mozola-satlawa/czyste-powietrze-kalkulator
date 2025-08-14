@@ -67,9 +67,7 @@
     thead th{font-size:10px}
     tbody td{font-size:10px}
     .num{font-variant-numeric:tabular-nums}
-    /* kolumny: węższe liczby, szersze nazwy */
     #tbodyMain, #tbodyEnv{font-size:10px}
-    /* szerokości kolumn tabel głównych */
     #tab-main th:nth-child(1), #tab-env th:nth-child(1){width:24px}
     #tab-main th:nth-child(2){width:210px}
     #tab-main th:nth-child(3){width:90px}
@@ -79,7 +77,6 @@
     #tab-main th:nth-child(7){width:90px}
     #tab-main th:nth-child(8){width:90px}
     #tab-main th:nth-child(9){width:95px}
-    /* kolumny Ocieplenie/Stolarka */
     #tab-env th:nth-child(2){width:210px}
     #tab-env th:nth-child(3){width:70px}
     #tab-env th:nth-child(4){width:110px}
@@ -89,15 +86,9 @@
     #tab-env th:nth-child(8){width:95px}
     #tab-env th:nth-child(9){width:95px}
     #tab-env th:nth-child(10){width:95px}
-
-    /* zawijanie tekstu + unikanie łamań wierszy */
     th,td{word-wrap:break-word;overflow-wrap:anywhere}
     tr{page-break-inside:avoid}
-
-    /* druk: domyślnie TYLKO zaznaczone pozycje, by wszystko się mieściło */
     #tbodyMain tr:not(.is-selected), #tbodyEnv tr:not(.is-selected){display:none}
-
-    /* uprość UI */
     input, select {border:0;background:transparent;padding:0}
     .site-footer{color:#000}
     .site-footer .inner{background:#fff;border-color:#bbb}
@@ -110,23 +101,10 @@
 <div id="login" class="login-overlay" aria-modal="true" role="dialog" aria-labelledby="loginTitle">
   <div class="login-box">
     <div class="login-title">
-      <!-- LOGO inline (zawsze widoczne) -->
+      <!-- LOGO PNG Base64 (placeholder) -->
       <div class="logo" aria-hidden="true">
-        <img alt="ARKON"
-             src='data:image/svg+xml;utf8,
-             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-               <defs>
-                 <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                   <stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#4c51bf"/>
-                 </linearGradient>
-               </defs>
-               <rect width="96" height="96" rx="14" fill="#0e1538"/>
-               <circle cx="24" cy="24" r="6" fill="url(#g)"/>
-               <circle cx="72" cy="24" r="6" fill="url(#g)"/>
-               <circle cx="24" cy="72" r="6" fill="url(#g)"/>
-               <circle cx="72" cy="72" r="6" fill="url(#g)"/>
-               <text x="48" y="58" text-anchor="middle" font-family="Segoe UI,Arial" font-size="26" font-weight="700" fill="#e8edff">ARKON</text>
-             </svg>'>
+        <!-- ARKON LOGO PNG (BASE64) – PODMIEŃ, JEŚLI CHCESZ -->
+        <img alt="ARKON" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAQCAYAAAB49Y7QAAAACXBIWXMAAAsSAAALEgHS3X78AAAAPElEQVR4nO3OsQkAQAwEwZL//2aWQwE0QeB0xwqG8xgk7u+FAAD8Jr8wHh8rCkZgO1FQqf8mF3dwcHBwcHBwcHBweE9QmU+Qp6wq7mPAAAAAElFTkSuQmCC">
       </div>
       <div>
         <div id="loginTitle" style="font-weight:800">Panel dostępu • Arkon</div>
@@ -152,23 +130,10 @@
 
 <div class="wrap" id="app" style="filter:blur(4px);pointer-events:none">
   <header>
-    <!-- LOGO inline (zawsze widoczne) -->
+    <!-- LOGO PNG Base64 (placeholder) -->
     <div class="logo" aria-hidden="true">
-      <img alt="ARKON"
-           src='data:image/svg+xml;utf8,
-           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-             <defs>
-               <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                 <stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#4c51bf"/>
-               </linearGradient>
-             </defs>
-             <rect width="96" height="96" rx="14" fill="#0e1538"/>
-             <circle cx="24" cy="24" r="6" fill="url(#g)"/>
-             <circle cx="72" cy="24" r="6" fill="url(#g)"/>
-             <circle cx="24" cy="72" r="6" fill="url(#g)"/>
-             <circle cx="72" cy="72" r="6" fill="url(#g)"/>
-             <text x="48" y="58" text-anchor="middle" font-family="Segoe UI,Arial" font-size="26" font-weight="700" fill="#e8edff">ARKON</text>
-           </svg>'>
+      <!-- ARKON LOGO PNG (BASE64) – PODMIEŃ, JEŚLI CHCESZ -->
+      <img alt="ARKON" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAQCAYAAAB49Y7QAAAACXBIWXMAAAsSAAALEgHS3X78AAAAPElEQVR4nO3OsQkAQAwEwZL//2aWQwE0QeB0xwqG8xgk7u+FAAD8Jr8wHh8rCkZgO1FQqf8mF3dwcHBwcHBwcHBweE9QmU+Qp6wq7mPAAAAAElFTkSuQmCC">
     </div>
     <div>
       <h1>Kalkulator dotacji • Czyste Powietrze 2025</h1>
@@ -328,11 +293,8 @@
 <footer class="site-footer" aria-label="Dane firmy">
   <div class="inner">
     <div class="f-logo" aria-hidden="true">
-      <img alt="" src='data:image/svg+xml;utf8,
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-        <rect width="96" height="96" rx="14" fill="#0e1538"/>
-        <text x="48" y="58" text-anchor="middle" font-family="Segoe UI,Arial" font-size="26" font-weight="700" fill="#e8edff">ARKON</text>
-      </svg>'>
+      <!-- ARKON LOGO PNG (BASE64) – PODMIEŃ, JEŚLI CHCESZ -->
+      <img alt="ARKON" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAQCAYAAAB49Y7QAAAACXBIWXMAAAsSAAALEgHS3X78AAAAPElEQVR4nO3OsQkAQAwEwZL//2aWQwE0QeB0xwqG8xgk7u+FAAD8Jr8wHh8rCkZgO1FQqf8mF3dwcHBwcHBwcHBweE9QmU+Qp6wq7mPAAAAAElFTkSuQmCC">
     </div>
     <div class="f-text">
       <b>ARKON – Przedsiębiorstwo Wielobranżowe</b><br>
@@ -700,27 +662,42 @@ function renderTotals(){
   q('#selCountEnv').textContent=e.countSel;
 }
 
+/* === PODMIANA: renderSummary – dopłata liczona po limitach === */
 function renderSummary(){
-  var m=getTotalsMain(), e=getTotalsEnv();
+  var m = getTotalsMain();
+  var e = getTotalsEnv();
 
-  // przytnij O/S do limitu sekcji
-  var envRaw = e.sumGrant || 0;
-  var envCap = ENV_CAPS[state.level.name] || 0;
-  var envGrant = envCap ? Math.min(envRaw, envCap) : envRaw;
-  if (q('#envCap')) q('#envCap').textContent = envCap ? fmt(envCap) : '—';
-  if (q('#envCapUsed')) q('#envCapUsed').textContent = envCap ? (envRaw>envCap?'TAK':'NIE') : '—';
+  // 1) Przytnij Ocieplenie/Stolarka do limitu sekcji
+  var envRawGrant = e.sumGrant || 0;
+  var envCap      = ENV_CAPS[state.level.name] || 0;
+  var envGrant    = envCap ? Math.min(envRawGrant, envCap) : envRawGrant;
+
+  // UI: limit sekcji + czy użyty
+  if (q('#envCap'))     q('#envCap').textContent = envCap ? fmt(envCap) : '—';
+  if (q('#envCapUsed')) q('#envCapUsed').textContent = envCap ? (envRawGrant > envCap ? 'TAK' : 'NIE') : '—';
+
+  // Po przycięciu sekcji – aktualizuj sumę dotacji i dopłatę sekcji
   if (q('#sumEnvGrant')) q('#sumEnvGrant').textContent = fmt(envGrant);
+  var envCopayCapped = (e.sumGross || 0) - envGrant;
+  if (q('#sumEnvCopay')) q('#sumEnvCopay').textContent = fmt(envCopayCapped);
 
-  // globalny limit od źródła ciepła
-  var rawGrant = (m.sumGrant || 0) + envGrant;
-  var cat = currentGlobalCategory();
-  var cap = cat ? (GLOBAL_CAPS[cat]||0) : 0;
-  var grant = cap>0 ? Math.min(rawGrant, cap) : rawGrant;
-  var capUsed = cap>0 && rawGrant>cap;
+  // 2) Subtotal dotacji (główne + O/S po przycięciu sekcji)
+  var subtotalGrant = (m.sumGrant || 0) + envGrant;
 
-  var sumCopay=(m.sumCopay||0)+(e.sumCopay||0);
+  // 3) Limit globalny wg wybranego źródła ciepła
+  var cat   = currentGlobalCategory();
+  var gCap  = cat ? (GLOBAL_CAPS[cat] || 0) : 0;
+  var totalGrant = gCap ? Math.min(subtotalGrant, gCap) : subtotalGrant;
+  var capUsed = gCap > 0 && subtotalGrant > gCap;
 
-  var need=0;
+  // 4) Suma kosztów BRUTTO wszystkiego
+  var totalGross = (m.sumGross || 0) + (e.sumGross || 0);
+
+  // 5) KOŃCOWA dopłata = totalGross - totalGrant
+  var totalCopay = Math.max(0, totalGross - totalGrant);
+
+  // 6) Min. wymagany wydatek netto (informacyjnie)
+  var need = 0;
   state.mainRows.forEach(function(r){
     if(r.sel && state.level.pct>0){
       var lim = limActive(DATA_MAIN[r.compIdx].variants[r.vIdx].lim);
@@ -734,12 +711,13 @@ function renderSummary(){
     }
   });
 
-  q('#sumGrantAll').textContent=fmt(grant);
-  q('#sumCopayAll').textContent=fmt(sumCopay);
-  q('#sumNeedAll').textContent=state.level.pct?fmt(need):'—';
+  // 7) UI
+  if (q('#sumGrantAll'))  q('#sumGrantAll').textContent = fmt(totalGrant);
+  if (q('#sumCopayAll'))  q('#sumCopayAll').textContent = fmt(totalCopay);
+  if (q('#sumNeedAll'))   q('#sumNeedAll').textContent  = state.level.pct ? fmt(need) : '—';
 
-  q('#globalCap').textContent = cap?fmt(cap):'—';
-  q('#globalCapUsed').textContent = cap? (capUsed?'TAK':'NIE') : '—';
+  if (q('#globalCap'))     q('#globalCap').textContent = gCap ? fmt(gCap) : '—';
+  if (q('#globalCapUsed')) q('#globalCapUsed').textContent = gCap ? (capUsed ? 'TAK' : 'NIE') : '—';
 }
 
 function updateAggregates(){ renderTotals(); renderSummary(); }
