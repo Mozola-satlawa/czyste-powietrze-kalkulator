@@ -12,8 +12,8 @@
   body{ margin:0;background:linear-gradient(180deg,#0a0f1e,#0c1230 60%,#0a0f1e); color:var(--ink); font:16px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif; }
   .wrap{max-width:1200px;margin:auto;padding:24px 16px 120px}
   header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
-  .logo{width:64px;height:64px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1c2a55;overflow:hidden}
-  .logo img{width:100%;height:100%;object-fit:contain;background:#fff;padding:6px;border-radius:8px}
+  .logo{width:64px;height:64px;border-radius:12px;display:grid;place-items:center;background:#0e1538;border:1px solid #1f2a55;overflow:hidden}
+  .logo img{width:100%;height:100%;object-fit:cover;background:#0e1538}
   h1{font-size:22px;margin:0}
   .muted{color:var(--muted);font-size:13px}
   .panel{background:linear-gradient(180deg,var(--p1),var(--p2));border:1px solid #1c2750;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 10px 30px #0006}
@@ -36,6 +36,7 @@
   table{width:100%;border-collapse:separate;border-spacing:0}
   th,td{padding:10px;border-bottom:1px solid var(--grid);text-align:left;vertical-align:middle}
   th.num,td.num{text-align:right}
+  .num{font-variant-numeric:tabular-nums}
   [aria-live="polite"]{outline:none}
   .cap-badge{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid #ff7b7b;border-radius:999px;font-size:11px;color:#ffdada;background:#3a0e14}
   .dim{opacity:.6}
@@ -43,35 +44,65 @@
   /* Footer */
   .site-footer{max-width:1200px;margin:16px auto 24px; color:#a9b6e6}
   .site-footer .inner{display:flex;gap:16px;align-items:center;padding:12px 16px;border:1px solid #1c2750;border-radius:12px;background:linear-gradient(180deg,#0e1740,#0f1a4a)}
-  .site-footer .f-logo{width:42px;height:42px;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}
-  .site-footer .f-logo img{width:100%;height:100%;object-fit:contain}
+  .site-footer .f-logo{width:42px;height:42px;border-radius:10px;background:#0e1538;display:grid;place-items:center;overflow:hidden}
+  .site-footer .f-logo img{width:100%;height:100%;object-fit:cover}
   .site-footer .f-text{font-size:13px;line-height:1.35}
   .site-footer .f-text b{color:#dfe6ff}
 
-  /* Druk – tylko zaznaczone wiersze */
-  .print-signs{display:none}
+  /* PRINT */
   @media print{
-    body{background:#fff;color:#000}
+    @page{ size:A4 landscape; margin:10mm; }
+    html,body{-webkit-print-color-adjust:exact; print-color-adjust:exact; background:#fff}
+    body{color:#000;font:11px/1.3 system-ui,Segoe UI,Roboto,Arial}
+    .wrap{max-width:none;margin:0;padding:0}
+    header{margin:0 0 6px 0}
+    h1{font-size:16px}
+    .muted{color:#000;font-size:11px}
+    .logo{width:42px;height:42px;border-radius:8px;border:1px solid #000}
+    .panel{box-shadow:none;border:1px solid #888;background:#fff;margin:6px 0;padding:8px}
     .tabs,.right button,.tab-btn,.login-overlay{display:none!important}
-    .panel{box-shadow:none;border:1px solid #bbb;background:#fff}
-    .logo{border:0;box-shadow:none}
-    .cap-badge{border-color:#000;color:#000}
+    .pill{border-color:#888;color:#000;background:#fff;font-size:10px;padding:4px 8px}
+    table{table-layout:fixed; width:100%}
+    th,td{border-bottom:1px solid #bbb;padding:5px 6px}
+    thead th{font-size:10px}
+    tbody td{font-size:10px}
+    .num{font-variant-numeric:tabular-nums}
+    /* kolumny: węższe liczby, szersze nazwy */
+    #tbodyMain, #tbodyEnv{font-size:10px}
+    /* szerokości kolumn tabel głównych */
+    #tab-main th:nth-child(1), #tab-env th:nth-child(1){width:24px}
+    #tab-main th:nth-child(2){width:210px}
+    #tab-main th:nth-child(3){width:90px}
+    #tab-main th:nth-child(4){width:90px}
+    #tab-main th:nth-child(5){width:95px}
+    #tab-main th:nth-child(6){width:95px}
+    #tab-main th:nth-child(7){width:90px}
+    #tab-main th:nth-child(8){width:90px}
+    #tab-main th:nth-child(9){width:95px}
+    /* kolumny Ocieplenie/Stolarka */
+    #tab-env th:nth-child(2){width:210px}
+    #tab-env th:nth-child(3){width:70px}
+    #tab-env th:nth-child(4){width:110px}
+    #tab-env th:nth-child(5){width:110px}
+    #tab-env th:nth-child(6){width:95px}
+    #tab-env th:nth-child(7){width:95px}
+    #tab-env th:nth-child(8){width:95px}
+    #tab-env th:nth-child(9){width:95px}
+    #tab-env th:nth-child(10){width:95px}
+
+    /* zawijanie tekstu + unikanie łamań wierszy */
+    th,td{word-wrap:break-word;overflow-wrap:anywhere}
+    tr{page-break-inside:avoid}
+
+    /* druk: domyślnie TYLKO zaznaczone pozycje, by wszystko się mieściło */
+    #tbodyMain tr:not(.is-selected), #tbodyEnv tr:not(.is-selected){display:none}
+
+    /* uprość UI */
+    input, select {border:0;background:transparent;padding:0}
     .site-footer{color:#000}
     .site-footer .inner{background:#fff;border-color:#bbb}
-    /* ukryj niezaznaczone wiersze */
-    #tbodyMain tr:not(.is-selected), #tbodyEnv tr:not(.is-selected){display:none}
-    /* uprość: ukryj kolumnę wyboru i pola wejściowe */
-    th:first-child, td:first-child{display:none}
-    input, select {border:0;background:transparent;padding:0}
     .print-signs{display:block}
   }
-
-  /* login */
-  .login-overlay{position:fixed;inset:0;background:radial-gradient(120% 120% at 20% 20%,#0c1230,#080c1e);display:grid;place-items:center;z-index:9999}
-  .login-box{width:min(520px,92vw);background:#10183a;border:1px solid #263166;border-radius:14px;padding:22px;box-shadow:0 16px 48px #000b}
-  .login-title{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .login-title .logo{width:56px;height:56px}
-  .login-grid{display:grid;gap:10px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -79,7 +110,24 @@
 <div id="login" class="login-overlay" aria-modal="true" role="dialog" aria-labelledby="loginTitle">
   <div class="login-box">
     <div class="login-title">
-      <div class="logo" aria-hidden="true"><img src="arkon-logo.png" alt=""></div>
+      <!-- LOGO inline (zawsze widoczne) -->
+      <div class="logo" aria-hidden="true">
+        <img alt="ARKON"
+             src='data:image/svg+xml;utf8,
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+               <defs>
+                 <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                   <stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#4c51bf"/>
+                 </linearGradient>
+               </defs>
+               <rect width="96" height="96" rx="14" fill="#0e1538"/>
+               <circle cx="24" cy="24" r="6" fill="url(#g)"/>
+               <circle cx="72" cy="24" r="6" fill="url(#g)"/>
+               <circle cx="24" cy="72" r="6" fill="url(#g)"/>
+               <circle cx="72" cy="72" r="6" fill="url(#g)"/>
+               <text x="48" y="58" text-anchor="middle" font-family="Segoe UI,Arial" font-size="26" font-weight="700" fill="#e8edff">ARKON</text>
+             </svg>'>
+      </div>
       <div>
         <div id="loginTitle" style="font-weight:800">Panel dostępu • Arkon</div>
         <div class="muted">Wpisz nazwę i hasło, aby otworzyć kalkulator.</div>
@@ -104,7 +152,24 @@
 
 <div class="wrap" id="app" style="filter:blur(4px);pointer-events:none">
   <header>
-    <div class="logo" aria-hidden="true"><img src="arkon-logo.png" alt="ARKON"></div>
+    <!-- LOGO inline (zawsze widoczne) -->
+    <div class="logo" aria-hidden="true">
+      <img alt="ARKON"
+           src='data:image/svg+xml;utf8,
+           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+             <defs>
+               <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                 <stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#4c51bf"/>
+               </linearGradient>
+             </defs>
+             <rect width="96" height="96" rx="14" fill="#0e1538"/>
+             <circle cx="24" cy="24" r="6" fill="url(#g)"/>
+             <circle cx="72" cy="24" r="6" fill="url(#g)"/>
+             <circle cx="24" cy="72" r="6" fill="url(#g)"/>
+             <circle cx="72" cy="72" r="6" fill="url(#g)"/>
+             <text x="48" y="58" text-anchor="middle" font-family="Segoe UI,Arial" font-size="26" font-weight="700" fill="#e8edff">ARKON</text>
+           </svg>'>
+    </div>
     <div>
       <h1>Kalkulator dotacji • Czyste Powietrze 2025</h1>
       <div class="muted">Źródło ciepła + ocieplenie/stolarka. Jedno źródło ciepła, limity m², VAT <span id="vatLive">8</span>%, zapis/CSV/druk.</div>
@@ -262,7 +327,13 @@
 <!-- STOPKA -->
 <footer class="site-footer" aria-label="Dane firmy">
   <div class="inner">
-    <div class="f-logo" aria-hidden="true"><img src="arkon-logo.png" alt=""></div>
+    <div class="f-logo" aria-hidden="true">
+      <img alt="" src='data:image/svg+xml;utf8,
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+        <rect width="96" height="96" rx="14" fill="#0e1538"/>
+        <text x="48" y="58" text-anchor="middle" font-family="Segoe UI,Arial" font-size="26" font-weight="700" fill="#e8edff">ARKON</text>
+      </svg>'>
+    </div>
     <div class="f-text">
       <b>ARKON – Przedsiębiorstwo Wielobranżowe</b><br>
       59‑170 Przemków • ul. Fabryczna 12 C • NIP: 5020038830 • KRS: 0000255361<br>
@@ -604,7 +675,7 @@ function getTotalsEnv(){
 }
 
 /* ===== limity: globalne + Ocieplenie/Stolarka ===== */
-var GLOBAL_CAPS = { piec:125600, pc_air:140300, pc_ground:170000 }; // poprawione pc_air: 140300
+var GLOBAL_CAPS = { piec:125600, pc_air:140300, pc_ground:170000 }; // pc_air poprawione na 140 300
 function currentGlobalCategory(){
   for (var i=0;i<state.mainRows.length;i++){
     var r=state.mainRows[i]; if(!r.sel) continue;
@@ -613,7 +684,7 @@ function currentGlobalCategory(){
   }
   return null;
 }
-/* Limit sekcji Ocieplenie/Stolarka – wg Twoich wytycznych: 83 000 (100%), proporcjonalnie 58 100 (70%), 33 200 (40%) */
+/* Limit sekcji Ocieplenie/Stolarka – wg Twoich wytycznych */
 var ENV_CAPS = { 'NAJWYŻSZY':83000, 'PODWYŻSZONY':58100, 'PODSTAWOWY':33200 };
 
 function renderTotals(){
