@@ -58,9 +58,7 @@
     .cap-badge{border-color:#000;color:#000}
     .site-footer{color:#000}
     .site-footer .inner{background:#fff;border-color:#bbb}
-    /* ukryj niezaznaczone wiersze */
     #tbodyMain tr:not(.is-selected), #tbodyEnv tr:not(.is-selected){display:none}
-    /* uprość: ukryj kolumnę wyboru i pola wejściowe */
     th:first-child, td:first-child{display:none}
     input, select {border:0;background:transparent;padding:0}
     .print-signs{display:block}
@@ -136,6 +134,16 @@
         <label for="swiadczenia">Świadczenia (MOPS/GOPS)</label>
         <select id="swiadczenia"><option value="">— wybierz —</option><option>TAK</option><option>NIE</option></select>
       </div>
+
+      <!-- NOWE: wybór EU ≤140 / EU >140 -->
+      <div>
+        <label for="eu140">EU (zapotrzebowanie na energię)</label>
+        <select id="eu140">
+          <option value="LE140" selected>EU ≤ 140 kWh/(m²·rok)</option>
+          <option value="GT140">EU &gt; 140 kWh/(m²·rok)</option>
+        </select>
+      </div>
+
       <div>
         <span class="muted" style="display:block;margin-bottom:6px">Tryb cen, które wpisuję</span>
         <div class="pill" role="radiogroup" aria-label="Tryb cen">
@@ -166,7 +174,7 @@
       <span class="pill">Suma dopłaty (brutto): <b id="sumCopayAll">0</b> zł</span>
       <span class="pill">Limit globalny: <b id="globalCap">—</b> zł</span>
       <span class="pill">Limit użyty? <b id="globalCapUsed">—</b></span>
-      <!-- NOWE PIGUŁKI – limit sekcji Ocieplenie/Stolarka -->
+      <!-- Limity Ocieplenie/Stolarka zależne od EU -->
       <span class="pill">Limit ocieplenie/stolarka: <b id="envCap">—</b> zł</span>
       <span class="pill">Limit O/S użyty? <b id="envCapUsed">—</b></span>
     </div>
@@ -335,7 +343,7 @@ function calcGrant(net, pct, limit){
 })();
 
 /* ===== level / state ===== */
-var state = { level:{name:'BRAK', pct:0}, priceMode:'NETTO', mainRows:[], envRows:[] };
+var state = { level:{name:'BRAK', pct:0}, priceMode:'NETTO', mainRows:[], envRows:[], eu:'LE140' };
 
 function calcLevel(o){
   var t=(o.typ||'').toUpperCase();
@@ -367,6 +375,11 @@ qa('input[name="pm"]').forEach(function(r){
     autosave();
   });
 });
+q('#eu140').addEventListener('change', function(){
+  state.eu = this.value || 'LE140';
+  updateAggregates();
+  autosave();
+});
 
 /* ===== dane GŁÓWNE ===== */
 var DATA_MAIN = [
@@ -376,6 +389,10 @@ var DATA_MAIN = [
     {label:'powietrze/powietrze',           lim:{P: 4480,M: 7840,T:11200}, globalCat:'pc_air'},
     {label:'gruntowa – wyższa klasa',       lim:{P:18000,M:31500,T:45000}, globalCat:'pc_ground'},
     {label:'dolne źródło (odwierty)',       lim:{P: 8000,M:14000,T:20000}, globalCat:'pc_ground'}
+  ]},
+  /* Zbiorcza wymiana źródła ciepła – limit 70% (22 200) tylko dla poziomu PODWYŻSZONY */
+  {id:'SRC', name:'Wymiana źródła ciepła (zbiorcze – 70%)', heat:true, variants:[
+    {label:'limit wg TermoLab (70%)', lim:{P:0,M:22200,T:0}, globalCat:'piec'}
   ]},
   {id:'SIEC',name:'Podłączenie do sieci ciepłowniczej (z przyłączem)', heat:true, variants:[
     {label:'standard', lim:{P:9800,M:15575,T:22250}, globalCat:'piec'}
@@ -390,7 +407,7 @@ var DATA_MAIN = [
     {label:'standard', lim:{P:4480,M:7840,T:11200}, globalCat:'piec'}
   ]},
   {id:'INST',name:'Instalacja CO + CWU', heat:false, variants:[
-    {label:'standard', lim:{P:8200,M:14350,T:20500}}
+    {label:'standard', lim:{P:14080,M:14350,T:20500}}  /* P skorygowane: 14 080 */
   ]},
   {id:'PLUK',name:'Płukanie instalacji', heat:false, variants:[
     {label:'standard', lim:{P:2000,M:2000,T:2000}}
@@ -604,8 +621,17 @@ function getTotalsEnv(){
   return {sumGrant:sumGrant,sumGross:sumGross,sumCopay:sumCopay,countSel:countSel};
 }
 
-/* ===== globalny limit dotacji wg źródła ciepła ===== */
-var GLOBAL_CAPS = { piec:125600, pc_air:140100, pc_ground:170000 };
+/* ===== limity ===== */
+/* Globalny limit dotacji wg źródła ciepła (poprawka pc_air → 140 300) */
+var GLOBAL_CAPS = { piec:125600, pc_air:140300, pc_ground:170000 };
+
+/* Limit sekcji Ocieplenie/Stolarka zależny od poziomu i EU */
+var ENV_CAPS = {
+  'PODSTAWOWY':  { LE140:19200, GT140:33200 },
+  'PODWYŻSZONY': { LE140:26400, GT140:45600 },
+  'NAJWYŻSZY':   { LE140:33000, GT140:57000 }
+};
+
 function currentGlobalCategory(){
   for (var i=0;i<state.mainRows.length;i++){
     var r=state.mainRows[i]; if(!r.sel) continue;
@@ -630,15 +656,25 @@ function renderTotals(){
 
 function renderSummary(){
   var m=getTotalsMain(), e=getTotalsEnv();
-  var rawGrant=(m.sumGrant||0)+(e.sumGrant||0);
 
+  /* sekcja O/S – przycięcie do limitu zależnego od EU */
+  var capEnv = (ENV_CAPS[state.level.name] || {})[state.eu] || 0;
+  var envRaw = e.sumGrant || 0;
+  var envCapped = capEnv ? Math.min(envRaw, capEnv) : envRaw;
+
+  /* suma „przed globalnym limitem” */
+  var subtotal = (m.sumGrant || 0) + envCapped;
+
+  /* globalny limit wg wybranego źródła */
   var cat = currentGlobalCategory();
-  var cap = cat ? (GLOBAL_CAPS[cat]||0) : 0;
-  var grant = cap>0 ? Math.min(rawGrant, cap) : rawGrant;
-  var capUsed = cap>0 && rawGrant>cap;
+  var gCap = cat ? (GLOBAL_CAPS[cat]||0) : 0;
+  var totalGrant = gCap ? Math.min(subtotal, gCap) : subtotal;
+  var capUsed = gCap>0 && subtotal>gCap;
 
+  /* dopłaty brutto liczymy od kosztów – bez dodatkowego „przycinania” */
   var sumCopay=(m.sumCopay||0)+(e.sumCopay||0);
 
+  /* minimalny wymagany wydatek netto (liczony z aktywnych pozycji) */
   var need=0;
   state.mainRows.forEach(function(r){
     if(r.sel && state.level.pct>0){
@@ -653,12 +689,15 @@ function renderSummary(){
     }
   });
 
-  q('#sumGrantAll').textContent=fmt(grant);
-  q('#sumCopayAll').textContent=fmt(sumCopay);
-  q('#sumNeedAll').textContent=state.level.pct?fmt(need):'—';
-
-  q('#globalCap').textContent = cap?fmt(cap):'—';
-  q('#globalCapUsed').textContent = cap? (capUsed?'TAK':'NIE') : '—';
+  /* wpisy do UI */
+  q('#sumEnvGrant').textContent = fmt(envCapped);
+  q('#sumGrantAll').textContent = fmt(totalGrant);
+  q('#sumCopayAll').textContent = fmt(sumCopay);
+  q('#sumNeedAll').textContent = state.level.pct?fmt(need):'—';
+  q('#globalCap').textContent = gCap?fmt(gCap):'—';
+  q('#globalCapUsed').textContent = gCap? (capUsed?'TAK':'NIE') : '—';
+  q('#envCap').textContent = capEnv?fmt(capEnv):'—';
+  q('#envCapUsed').textContent = capEnv? (envRaw>capEnv?'TAK':'NIE') : '—';
 }
 
 function updateAggregates(){ renderTotals(); renderSummary(); }
@@ -720,7 +759,7 @@ function autoNeedEnv(){
   autosave();
 }
 
-/* ===== CSV / SAVE / LOAD / PRINT – bez zmian ===== */
+/* ===== CSV / SAVE / LOAD / PRINT ===== */
 function csvEscape(v){ var s=String(v==null ? '' : v); return /[",;\n]/.test(s)? '"' + s.replace(/"/g,'""') + '"' : s; }
 function downloadCSV(name, rows){
   var csv = rows.map(function(r){ return r.map(csvEscape).join(';'); }).join('\n');
@@ -759,8 +798,46 @@ function exportCSVAll(){
   });
   downloadCSV('cp2025_laczny_'+todayStr(), out);
 }
-function saveAll(){ /* ... jak u Ciebie ... */ }
-function loadAll(){ /* ... jak u Ciebie ... */ }
+
+/* prosty SAVE/LOAD spójny z nowymi polami */
+function saveAll(){
+  var data={
+    typ:q('#typ').value, mies:q('#doch_mies').value, roczny:q('#doch_roczny').value, swiad:q('#swiadczenia').value,
+    eu:state.eu, pm:state.priceMode, vat:VAT,
+    main: state.mainRows.map(function(r){ return {sel:r.sel, vIdx:r.vIdx, cost:r.costInput}; }),
+    env:  state.envRows.map(function(r){ return {sel:r.sel, m2:r.m2, ownRate:r.ownRate}; })
+  };
+  localStorage.setItem('cp2025_arkon', JSON.stringify(data));
+}
+function loadAll(){
+  var raw=localStorage.getItem('cp2025_arkon'); if(!raw){ alert('Brak zapisu'); return; }
+  var d; try{ d=JSON.parse(raw); }catch(e){ alert('Nieprawidłowy zapis.'); return; }
+  q('#typ').value=d.typ||''; q('#doch_mies').value=d.mies||''; q('#doch_roczny').value=d.roczny||''; q('#swiadczenia').value=d.swiad||'';
+  state.eu = (d.eu==='GT140') ? 'GT140' : 'LE140'; q('#eu140').value=state.eu;
+  state.priceMode = d.pm==='BRUTTO' ? 'BRUTTO' : 'NETTO';
+  qa('input[name="pm"]').forEach(function(r){ r.checked=(r.value===state.priceMode); });
+  if (typeof d.vat!=='undefined'){ setVAT(d.vat); q('#vatSel').value=String(d.vat); }
+
+  if (d.main && d.main.forEach) {
+    d.main.forEach(function(m,i){
+      var r=state.mainRows[i]; if(!r) return;
+      r.sel=!!m.sel; r.els.sel.checked=r.sel; r.tr.classList.toggle('is-selected', r.sel);
+      r.vIdx=Number(m.vIdx||0); r.els.selVar.value=String(r.vIdx);
+      r.costInput=toNum(m.cost); r.els.cost.value=r.costInput?String(r.costInput):'';
+      recalcMainRow(i);
+    });
+  }
+  if (d.env && d.env.forEach) {
+    d.env.forEach(function(e,i){
+      var r=state.envRows[i]; if(!r) return;
+      r.sel=!!e.sel; r.els.sel.checked=r.sel; r.tr.classList.toggle('is-selected', r.sel);
+      r.m2=toNum(e.m2); r.els.m2.value=r.m2?String(r.m2):'';
+      r.ownRate=toNum(e.ownRate); r.els.ownRate.value=r.ownRate?String(r.ownRate):'';
+      recalcEnvRow(i);
+    });
+  }
+  refreshLevel();
+}
 function printAll(){ window.print(); }
 var autosave = debounce(saveAll, 250);
 
@@ -779,7 +856,7 @@ function init(){
   buildMain(); buildEnv(); refreshLevel();
   q('#btnPresetMain').addEventListener('click', presetMain);
   q('#btnAutoNeedMain').addEventListener('click', autoNeedMain);
-  q('#btnCSVMain').addEventListener('click', exportCSVMain);
+  q'#btnCSVMain' && q('#btnCSVMain').addEventListener('click', exportCSVMain);
   q('#btnPresetEnv').addEventListener('click', presetEnv);
   q('#btnAutoNeedEnv').addEventListener('click', autoNeedEnv);
   q('#btnCSVEnv').addEventListener('click', exportCSVEnv);
@@ -789,46 +866,6 @@ function init(){
   q('#btnPrint').addEventListener('click', printAll);
 }
 init();
-</script>
-
-<!-- === DODANE: sufit dla sekcji Ocieplenie/Stolarka + patch sumy === -->
-<script>
-/* Limit sekcji Ocieplenie/Stolarka:
-   NAJWYŻSZY 83 000 zł, PODWYŻSZONY 58 100 zł (0,7×), PODSTAWOWY 33 200 zł (0,4×) */
-var ENV_CAPS = { 'NAJWYŻSZY':83000, 'PODWYŻSZONY':58100, 'PODSTAWOWY':33200 };
-
-/* zachowaj oryginał i nadpisz updateAggregates tak, by przycinać O/S,
-   a potem stosować limit globalny (jak dotąd) */
-var __updateAggregates = updateAggregates;
-updateAggregates = function(){
-  // policz jak zwykle
-  __updateAggregates();
-
-  // odczytaj surowe sumy
-  var m = getTotalsMain();
-  var e = getTotalsEnv();
-  var envRaw = e.sumGrant || 0;
-
-  // sufit sekcji O/S
-  var capEnv = ENV_CAPS[state.level.name] || 0;
-  var envCapped = capEnv ? Math.min(envRaw, capEnv) : envRaw;
-
-  // pokaż info o limicie sekcji
-  if (q('#envCap'))     q('#envCap').textContent = capEnv ? fmt(capEnv) : '—';
-  if (q('#envCapUsed')) q('#envCapUsed').textContent = capEnv ? (envRaw > capEnv ? 'TAK' : 'NIE') : '—';
-
-  // przelicz łączną Suma dotacji z przyciętą sekcją O/S
-  var subtotal = (m.sumGrant || 0) + envCapped;
-
-  // zastosuj limit globalny (piec / pc_air / pc_ground)
-  var cat = (typeof currentGlobalCategory === 'function') ? currentGlobalCategory() : null;
-  var gCap = (typeof GLOBAL_CAPS !== 'undefined' && cat) ? (GLOBAL_CAPS[cat] || 0) : 0;
-  var total = gCap ? Math.min(subtotal, gCap) : subtotal;
-
-  // wpisz nowe wartości do podsumowania
-  if (q('#sumEnvGrant')) q('#sumEnvGrant').textContent = fmt(envCapped);
-  if (q('#sumGrantAll')) q('#sumGrantAll').textContent = fmt(total);
-};
 </script>
 </body>
 </html>
